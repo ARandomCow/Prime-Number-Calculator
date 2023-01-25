@@ -2,6 +2,8 @@
 // n using Sieve of Eratosthenes
 #include <bits/stdc++.h>
 #include <chrono>
+#include <iostream>
+#include <fstream>
 using namespace std;
 using namespace std::chrono;
 
@@ -37,7 +39,7 @@ void FermatsTheorem(int n) {
 		int num = (pow(2,p)-1);
 
 		if (num == 1) {
-			cout << num << " ";
+			cout << p << " ";
 		}
 	}
 }
@@ -105,22 +107,53 @@ void SieveOfAtkin(int limit)
     cout << "\n";
 }
 
-// Driver Code
-int main()
-{
-	int n = 20;
-	cout << "Primes smaller than or equal to " << n << endl;
+bool is_prime(int n) {
+    if (n <= 1) {
+        return false;
+    }
+    for (int i = 2; i <= sqrt(n); i++) {
+        if (n % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}
 
-    // Start Timer 
+
+// Driver Code
+int main() {
+	long long n = 0LL;
+    long long limit = 1000000000000LL;
+
+    long long primeCounter = 0LL;
+
+    ofstream myfile("test.txt");
+
     auto start = high_resolution_clock::now();
-	//SieveOfEratosthenes(n);
-	//FermatsTheorem(n);
-	SieveOfAtkin(n);
-    // End Timer 
+    while (n < limit) {
+    
+        if (is_prime(n)) {
+            primeCounter++;
+            cout << primeCounter << "\n"; 
+
+             if (myfile.is_open())
+            {
+                    myfile << n << "\n";
+                    //myfile.close();
+            }
+        }
+        //cout << primeCounter 
+        n++; 
+    }
+
     auto stop = high_resolution_clock::now();
-	// Calculate execution time 
     auto duration = duration_cast<microseconds>(stop - start);
  
-    cout << "\nExecution Time: " << duration.count() << " Microseconds" << endl;
+    cout << "\nExecution Time: " << duration.count() << " Microseconds\n";
+    myfile << duration.count() << " Microseconds"; 
+    myfile.close(); 
+
+    cout << "Primes Found: " << primeCounter; 
+
 	return 0;
 }
