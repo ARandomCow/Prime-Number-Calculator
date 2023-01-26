@@ -22,15 +22,15 @@ def sieve_of_eratosthenes(n):
     return primes
 
 #@param primeList needs to be the list of prime numbers less than m
-def sieve_to_2n(m, primeList):
-    primes = [False, True] * (2*m)
+def sieve_add_n(start, n, primeList):
+    primes = [False, True] * (start+n)
     for i in range(0, len(primeList)):
-        if(primeList[i]<=int((2*m)**(1/2))+1):
+        if(primeList[i]<=int((start+n)**(1/2))+1):
             prime = primeList[i]
-            multiple = m - (m%prime) + prime
+            multiple = start - (start%prime) + prime
             if multiple%2==0:
                 multiple += prime
-            for j in range(multiple, 2*m, prime):
+            for j in range(multiple, start+n, prime):
                 primes[j] = False
     return primes
 
@@ -60,8 +60,8 @@ for i in range(1, n, 2):
 
 #print('Primes from 0 to ' + str(n) + ' now collected')
 
-morePrimes = sieve_to_2n(n, primelist)
-for i in range(n+1, 2*n, 2):
+morePrimes = sieve_add_n(n, n, primelist)
+for i in range(n+1, n+n, 2):
     if morePrimes[i]:
         primelist.append(i)
         count +=1
