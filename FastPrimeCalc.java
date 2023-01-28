@@ -1,11 +1,18 @@
 import javax.rmi.ssl.SslRMIServerSocketFactory;
 import javax.sound.sampled.BooleanControl;
 
-import java.util.LinkedList;
+import java.util.*;
 import java.lang.Math;
+import java.lang.reflect.Array;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
 
-public class primeCalc2
+
+
+public class FastPrimeCalc extends sieveMethods
 {
+
 
 //vague instructions
 //MAX, add, and repeat are the two important variables to mess around with
@@ -14,143 +21,66 @@ public class primeCalc2
 //repeat is the simplest one, it just determines how many times to repeat the add function
 //aka how many times you increase your prime number interval by 'add'
 
+
     public static void main(String[] args)
     {
-
-    final long startTime = System.currentTimeMillis();
-    // find all primes less than n
-
+        final long startTime = System.currentTimeMillis();
 //--------------------------------------------------------------------------------------------------
-        Integer MAX = 10000000;
+        Integer primeMax = 1000000;
+        int numOfPrimes = 78497;
+//primeMax = 100, numOfPrimes = 24
+//if primeMax = 1,000,000, then numOfPrimes = 78,497
 //--------------------------------------------------------------------------------------------------
 
-        int count = 0;
+        sieveMethods erat = new sieveMethods(primeMax);
 
+        int[] primeArray = erat.sieveOfEratosthenes(numOfPrimes);
 
+//        for(int i =0; i<primeArray.length; i++){
+//            System.out.println(primeArray[i]);
+//        }
 
+        int startCount = erat.getStartCount();
+        System.out.println(startCount + " is the amount of primes below " + primeMax);
 
+        final long firstEndTime = System.currentTimeMillis();
+        System.out.println("Initial execution time: " + (firstEndTime - startTime) + " milliseconds");
 
-        //boolean list for all odd numbers
-        //0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40  
-        //1,  3,  5,  7,  9,  11, 13, 15, 17, 19, 21,  23,  25,  27,  29,  31,  33,  35,  37,  39,  41,  43,  45,  47,  49,  51,  53,  55,  57,  59,  61,  63,  65,  67,  69,  71,  73,  75,  77,  79,  81
-        boolean[] boolOddArray = new boolean[(int)(MAX/2)+1];
-        boolOddArray[0] = true;
-        
-        //for (int y = 0; y < boolOddArray.length; y++)
-        //{
-        //  System.out.print(boolOddArray[y] + ", ");
-        //}
+        long start = primeMax;
+        long add = 1000000;
+        int primeArrayLength = 300000;
+        int repeat = 0;
+        int intervalCount = 0;
 
-        //1 is true because 1 is not prime
-
-        //starting with prime = 3
-        for (Integer i = 1; i < (int) (Math.sqrt(MAX))+1; i++) 
+        for(repeat = 0; repeat<9999; repeat++)
         {
-          if (!boolOddArray[i]) {
-        //j = i can be optimized but I need to find the algorithm to get i^2
-            for (Integer j = (((2*i)+1)*((2*i)+1)-1)/2; j<(MAX/2)+1; j+=(2*i)+1)
+            long[] primeList = erat.sieveFindInterval(start, add, primeArray, primeArrayLength);
+//            System.out.println(primeList.length);
+//          for(int i =0; i<primeList.length; i++){
+//              System.out.println(primeList[i]);
+//          }
+/* 
+            for (int i = 0; i< primeList.size(); i++){
+                System.out.println(primeList.get(i));
+            }
+*/              
+
+            if(repeat%500==0)
             {
-                boolOddArray[j] = true;
+
+                System.out.println("interval " + start + " to " + (start+(add*500)) + " complete");
             }
-          }
+            intervalCount = erat.getIntervalCount()+1000;
+            primeArrayLength = intervalCount;
+            start+=add;
         }
+        final long finalEndTime = System.currentTimeMillis();
+        System.out.println("Final execution time: " + (finalEndTime - startTime) + " milliseconds");
 
-        LinkedList<Integer> primeList = new LinkedList<Integer>();
+        long totalCount = erat.getTotalCount();
+        System.out.println("Total primes calculated: " + totalCount);
 
-        for(Integer y =1; y<(MAX/2); y++){
-            if(!boolOddArray[y]){
-                primeList.addLast((2*y)+1);
-                count+=1;
-            }
-        }
-//        System.out.println(primeList);
-        System.out.println(primeList.size());
-
-        final long endTime = System.currentTimeMillis();
-        System.out.println("Initial execution time: " + (endTime - startTime) + " milliseconds");
-
-
-//      now I need to create the same add n function
-//      primeList = [3, 5, 7, . . . ]
-//      start
-
-
-/*
- * for i in range(0, len(primeList)):
-        if(primeList[i]>int((start+n)**(1/2))+1):
-            break
-        prime = primeList[i]
-        multiple = start - (start%prime) + prime
-        if multiple%2==0:
-            multiple += prime
-        for j in range(multiple, start+n, 2*prime):
-                primes[j-start] = False
-    return primes
- */
-
-        int start = MAX;
-//----------------------------------------------------------------------------------------------------------------
-        int add = 10000000;
-//----------------------------------------------------------------------------------------------------------------
-        int bount = 0;
-        long repeatStartTime = System.currentTimeMillis(); 
-        
-//----------------------------------------------------------------------------------------------------------------
-        for(int repeat = 0; repeat < 99; repeat++){
-//----------------------------------------------------------------------------------------------------------------
-
-
-            boolean[] boolAddArray = new boolean[(add/2)];
-            for (int l = 0; l<primeList.size(); l++ )
-            {
-                Integer prime = primeList.get(l);
-                if (prime > (int)Math.sqrt(start+add)+1)
-                {
-                    break;
-                }
-//let start = 10
-//0,  1,  2,  3,  4,  5,  6,  7,  8
-//11, 13, 15, 17, 19, 21, 23, 25, 27
-//the formula is 2j+1+start
-            int multiple = start - (start%prime) + prime;
-            if(multiple%2==0)
-            {
-                multiple += prime;
-            }
-            for (int j = multiple; j< start+add; j+=2*prime)
-            {
-                boolAddArray[(int)(j-start-1)/2] = true;
-            }
-        }
-
-        for(Integer k =0; k<(add/2); k++){
-            if(!boolAddArray[k]){
-                primeList.addLast((2*k)+1+start);
-                count += 1;
-            }
-        }
-
-        start += add;
-
-        bount ++;
-        if (bount%10==0)
-        {
-            long repeatEndTime = System.currentTimeMillis();
-            System.out.println(bount + " repetitions after  " + (repeatEndTime - repeatStartTime) + " total milliseconds");
-            System.out.println("primes found up to " + start);
-            System.out.println("number of primes = " + count);
-
-        }
-//        System.out.println(primeList);
-    //    System.out.println(count + " primes have been calculated");
-    }
-        System.out.println(count + " primes have been calculated");
-        final long otherEndTime = System.currentTimeMillis();
-        System.out.println("Total execution time:  " + (otherEndTime - startTime));
-
-
-
-
+    
 
     }
 
