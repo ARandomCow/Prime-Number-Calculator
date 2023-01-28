@@ -15,9 +15,11 @@ public class FastPrimeCalc extends sieveMethods
 
 
 //vague instructions
-//MAX, add, and repeat are the two important variables to mess around with
-//MAX determines to what number you find the first prime numbers (0, MAX)
+//primeMax, add, and repeat are the two important variables to mess around with
+//primeMax determines to what number you find the first prime numbers (0, MAX)
+//numOfPrimes will be the size of your starting array thatll be used for the rest of the sieves
 //add determines the interval that you'll be finding more prime numbers in (start, start+add)
+//primeArrayLength determines the size of your prime carrying array. Make sure it's big enough.
 //repeat is the simplest one, it just determines how many times to repeat the add function
 //aka how many times you increase your prime number interval by 'add'
 
@@ -83,8 +85,4 @@ public class FastPrimeCalc extends sieveMethods
     
 
     }
-
-
-
-
 }
