@@ -15,7 +15,7 @@ public class sieveMethods
     int startCount;
     int intervalCount;
     int totalCount;
-//ignore
+    //ignore
     public sieveMethods()
     {
         num = 10000;
@@ -29,7 +29,8 @@ public class sieveMethods
     }
 
 
-//returns the amount of calculated primes. . .theoretically at least
+    // returns the amount of calculated primes   
+    // Hello Brady here this is in fact how getters in java should work :)
     public int getStartCount(){
         return startCount;
     }

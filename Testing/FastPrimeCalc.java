@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.io.IOException;
 
 
-
+// Nice inheritanceeeeee
 public class FastPrimeCalc extends sieveMethods
 {
 
