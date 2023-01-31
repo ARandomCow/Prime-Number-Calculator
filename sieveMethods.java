@@ -143,8 +143,5 @@ public class sieveMethods
 //        System.out.println(intervalCount + " is the amount of primes in interval " + start + " to " + (start+add));
         return newPrimeList;
     }
-
-
-
 }
 
