@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 /*
  * This class will eventually handle prime calculations and packet building 
