@@ -144,6 +144,5 @@ public class primeCalc extends sieveMethods
                 totalCount = erat.getTotalCount();
                 System.out.println("Total primes calculated: " + totalCount);
         
-
     }
 }
