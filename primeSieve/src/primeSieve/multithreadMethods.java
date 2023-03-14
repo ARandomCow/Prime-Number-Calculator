@@ -1,8 +1,6 @@
-package VScodeProjects;
+package primeSieve;
 
-import VScodeProjects.*;
 
-import java.util.*;
 import java.io.*;
 
 public class multithreadMethods implements Runnable {
@@ -23,9 +21,9 @@ public class multithreadMethods implements Runnable {
 
     }
 
-    public multithreadMethods(long startingNum, int addNum, 
-    int[] primeList, int newPrimeLength, int number,
-    int numOfThreads, long totalIntervalNum) {
+    public multithreadMethods(long startingNum, int addNum,
+                              int[] primeList, int newPrimeLength, int number,
+                              int numOfThreads, long totalIntervalNum) {
         start = startingNum;
         add = addNum;
         listLengthOfNewPrimes = newPrimeLength;
@@ -40,48 +38,58 @@ public class multithreadMethods implements Runnable {
 
     //@Override
     public void run() {
-        try 
-        {
+        try {
+            final long startTime = System.currentTimeMillis();
 //            String csvName = i + "primeList.csv";
             String binName = i + "primeList.bin";
 
-//             File csvFile = new File(csvName);
-//             PrintWriter out = new PrintWriter(csvFile);
+//            File csvFile = new File(csvName);
+//            PrintWriter out = new PrintWriter(csvFile);
             FileOutputStream fileOs = new FileOutputStream(binName);
             ObjectOutputStream oos = new ObjectOutputStream(fileOs);
 
             System.out.println("Running thread " + i);
-
-            for (int j = 0; j < repetitions; j++) 
+            int count = 0;
+            for (int j = 0; j < repetitions; j++)
             {
                 //creates new array of primes
-                primeInterval = multiSieve.sieveFindInterval(start + (add * j), add, primeArray,
+                long[] primeInterval = multiSieve.sieveFindInterval(start + ((long) add * j), add, primeArray,
                         listLengthOfNewPrimes);
 
+                int numPrimes = multiSieve.getIntervalCount();
                 //put primes in .csv file
                 /*
-                  for(int y = 0; y<primeInterval.length; y++){
-                  out.println(primeInterval[y]);
-                  }
+                for(long prime: primeInterval){
+                    out.println(prime);
+                }
                 /**/
 
                 //put primes in .bin file
-                /**/ 
-                for (int i = 0; i < primeInterval.length; i++) {
-                    oos.writeLong(primeInterval[i]);
+                /**/
+                for (long prime: primeInterval) {
+                    oos.writeLong(prime);
                 }
                 /* */
-                
+
+                listLengthOfNewPrimes = numPrimes + 10000;
+
+                if (j%10000 == 0){
+                    System.out.println((start+ (long) add *10000L *count) + " to " + ((start+ (long) add *10000L * count)+add* 10000L) + " has been calculated");
+                    count++;
+                    long intTime = System.currentTimeMillis();
+                    System.out.println((intTime-startTime)/1000 + " seconds have passed");
+                }
             }
 //            out.close();
             oos.close();
 
             totalPrimes = multiSieve.getTotalCount();
             System.out.println("Total primes calculated for thread " + i + ": " + totalPrimes);
-            System.out.println("Last prime in list: " + primeInterval[primeInterval.length-1]);
+//            System.out.println("Last prime in list: " + primeInterval[primeInterval.length-1]);
+            /**/
         } catch (IOException e) {
-            e.printStackTrace();
-        }
+            e.printStackTrace();}
+        /* */
     }
 
     public long[] getPrimes() {

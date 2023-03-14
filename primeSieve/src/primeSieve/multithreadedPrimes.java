@@ -1,6 +1,5 @@
-import VScodeProjects.*;
-import java.util.*;
-import java.io.*;
+package primeSieve;
+
 
 public class multithreadedPrimes {
 
@@ -16,8 +15,8 @@ public class multithreadedPrimes {
         // if 1,000 then 167
         // if 10,000 then 1228
         // if 1,000,000, then  78,497
-        // if 100,000,000, then 5761454
-        // if primeMax = 1,000,000,000 then numOfPrimes = 50847533
+        // if 100,000,000, then 5,761,454
+        // if primeMax = 1,000,000,000 then numOfPrimes = 50,847,533
         // --------------------------------------------------------------------------------------------------
 
         sieveMethods erat = new sieveMethods(primeMax);
@@ -33,19 +32,20 @@ public class multithreadedPrimes {
         final long firstEndTime = System.currentTimeMillis();
         System.out.println("Initial execution time: " + (firstEndTime - startTime) + " milliseconds");
 
+        //START MUST BE AT LEAST SQRT(ADD)
         long start = primeMax;
-        int add = 1000000;
-        int newPrimeLength = 100000;
+        int add = 1_000_000;
+        int newPrimeLength = 100_000;
         int numOfThreads = 5;
-        long startDifference = 200000000;
+        long startDifference = 200_000_000L;
 
-        multithreadMethods threadi = new multithreadMethods(start, 1, primeArray, 
-        newPrimeLength, 1, numOfThreads, startDifference);
+        multithreadMethods threadi = new multithreadMethods(start, 1, primeArray,
+                newPrimeLength, 1, numOfThreads, startDifference);
         Thread t1 = new Thread(threadi);
 
         for (int i = 0; i < numOfThreads; i++) {
-            threadi = new multithreadMethods(start + (startDifference * i), 
-            add, primeArray, newPrimeLength, i, numOfThreads, startDifference);
+            threadi = new multithreadMethods(start + (startDifference * i),
+                    add, primeArray, newPrimeLength, i, numOfThreads, startDifference);
             t1 = new Thread(threadi);
             t1.start();
         }
