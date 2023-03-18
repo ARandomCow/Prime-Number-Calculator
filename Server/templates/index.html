@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Server</title>
+    <style>
+        body {
+            background-color: #7e8d8f;
+            color: #85c1c9;
+            font-family: sans-serif;
+        }
+        h1 {
+            font-size: 3em;
+            text-align: center;
+        }
+        h2 {
+            font-size: 2em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prime Calculator</h1>
+    <h2>Highest Prime:</h2>
+    <h1 id="number-heading"></h1>
+    <script>
+        setInterval(function() {
+            fetch('/number')
+                .then(response => response.text())
+                .then(number => document.getElementById('number-heading').innerText = number);
+        }, 10); // Wait for 1 second
+    </script>
+</body>
+</html>

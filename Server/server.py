@@ -1,0 +1,56 @@
+from flask import Flask, render_template
+import random
+import time
+
+app = Flask(__name__)
+
+
+def is_prime(n):
+    """Return True if n is probably prime, False if it is composite."""
+    if n == 2 or n == 3:
+        return True
+    if n < 2 or n % 2 == 0:
+        return False
+    
+    # write n-1 as 2^r * d, where d is odd
+    d = n - 1
+    r = 0
+    while d % 2 == 0:
+        d //= 2
+        r += 1
+    
+    # repeat the test k times
+    k = 10
+    for i in range(k):
+        a = random.randint(2, n-2)
+        x = pow(a, d, n)
+        if x == 1 or x == n-1:
+            continue
+        for j in range(r-1):
+            x = pow(x, 2, n)
+            if x == n-1:
+                break
+        else:
+            return False
+    
+    return True    
+
+i = 0
+def getNextPrime():
+    global i # declare global variable
+    i += 1
+    if is_prime(i):
+        return i
+    return getNextPrime() # recursive call 
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/number")
+def number():
+    return str(getNextPrime())
+
+if __name__ == "__main__":
+    app.run(debug=True)
