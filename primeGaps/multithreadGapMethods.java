@@ -24,13 +24,13 @@ public class multithreadGapMethods implements Runnable {
     }
 
     public multithreadGapMethods(long startingNum, int addNum,
-                                 short[] baseGapArray, int newGapArrayLength, int number,
+                                 short[] baseGapArray, int newGapArrayLength, int threadNumber,
                                  int numOfThreads, long totalIntervalNum) {
         start = startingNum;
         add = addNum;
         listLengthOfGapInterval = newGapArrayLength;
         gapArray = baseGapArray;
-        i = number;
+        i = threadNumber;
         numThreads = numOfThreads;
         totalInterval = totalIntervalNum;
         repetitions = (int) (totalInterval/add);
@@ -52,7 +52,7 @@ public class multithreadGapMethods implements Runnable {
 
             System.out.println("Running thread " + i);
             int count = 0;
-            for (int j = 1; j <= repetitions; j++)
+            for (int j = 0; j < repetitions; j++)
             {
                 //creates new array of primes
                 short[] gapInterval = multiSieve.sieveFindInterval(start + ((long) add * j), add, gapArray,
@@ -75,11 +75,12 @@ public class multithreadGapMethods implements Runnable {
 
                 listLengthOfGapInterval = numPrimes + 10000;
                 long numOfRepeats=100;
+                long intTime = System.currentTimeMillis();
                 if (j%numOfRepeats == 0){
-                    System.out.println((start+ (long) add *numOfRepeats *count) + " to " + ((start+ (long) add *numOfRepeats * count)+add* numOfRepeats) + " has been calculated");
+                    System.out.println((start+ (long) add *numOfRepeats *count) +
+                            " to " + ((start+ (long) add *numOfRepeats * count)+add* numOfRepeats) +
+                            " has been calculated in " + (intTime-startTime)/1000 + " seconds");
                     count++;
-                    long intTime = System.currentTimeMillis();
-                    System.out.println((intTime-startTime)/1000 + " seconds have passed");
                 }
             }
             out.close();
