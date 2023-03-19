@@ -7,8 +7,8 @@ public class multithreadedPrimes {
 
         final long startTime = System.currentTimeMillis();
 
-        Integer primeMax = 1000000;
-        int numOfPrimes = 78497;
+        Integer primeMax = 1_000_000;
+        int numOfPrimes = 100_000;
         // its the number of primes - 1 (because this algorithm doesnt worry about 2 or
         // multiples of it)
         // if primeMax = 100, numOfPrimes = 24
@@ -32,11 +32,11 @@ public class multithreadedPrimes {
         final long firstEndTime = System.currentTimeMillis();
         System.out.println("Initial execution time: " + (firstEndTime - startTime) + " milliseconds");
 
-        //START MUST BE AT LEAST SQRT(ADD)
-        long start = primeMax;
+        long start = 0;
         int add = 1_000_000;
         int newPrimeLength = 100_000;
-        int numOfThreads = 5;
+        // optimal numOfThreads ~ the amount of cores you CPU has (for my laptop I used 5 threads)
+        int numOfThreads = 1;
         long startDifference = 200_000_000L;
 
         multithreadMethods threadi = new multithreadMethods(start, 1, primeArray,
@@ -57,7 +57,7 @@ public class multithreadedPrimes {
         }
 
         final long endTime = System.currentTimeMillis();
-        System.out.println("Total time elapsed: " + (endTime - startTime));
+        System.out.println("Total time elapsed: " + (endTime - startTime) + " milliseconds");
     }
 
 }

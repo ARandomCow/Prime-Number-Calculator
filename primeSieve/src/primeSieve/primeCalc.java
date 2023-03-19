@@ -42,21 +42,22 @@ public class primeCalc {
 
         long startCount = erat.getStartCount();
         System.out.println(startCount + " is the amount of primes below " + primeMax);
-        for(int i = 0; i<10; i++){
-            System.out.println(primeArray[i]);
-        }
+//        for(int i = 0; i<10; i++){
+//            System.out.println(primeArray[i]);
+//        }
 
         final long firstEndTime = System.currentTimeMillis();
         System.out.println("Initial execution time: " + (firstEndTime - startTime) + " milliseconds");
 
-        long start = primeMax;
-        int add = 1000000;
-        int primeArrayLength = 300000;
+        long start = 0;
+        int add = 1_000_000;
+        int primeArrayLength = 100_000;
         //repeat should be initialized as 1 + (primeMax/add)
         int repeat = 1;
+        int numOfRepeats = 1000;
         int intervalCount;
         long totalCount = erat.getTotalCount();
-        int checkInterval = 20;
+        int checkInterval = 200;
         long bufferstart = start;
 /*
                 File csvFile = new File("primeList.csv");
@@ -87,7 +88,7 @@ public class primeCalc {
                 }
 /**/
 
-        while (repeat<400)
+        while (repeat<=numOfRepeats)
         {
             long[] primeList = erat.sieveFindInterval(start, add, primeArray, primeArrayLength);
             //            System.out.println(primeList.length);
@@ -140,6 +141,11 @@ public class primeCalc {
             totalCount = erat.getTotalCount();
             intervalCount = erat.getIntervalCount()+20000;
             primeArrayLength = intervalCount;
+//            System.out.println(primeList[0] + " | " + primeList[1]);
+
+//            for(int i = 0; i<10; i++){
+//                System.out.println(primeList[i]);
+//            }
 
         }
 

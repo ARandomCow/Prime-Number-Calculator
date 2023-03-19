@@ -43,12 +43,12 @@ public class multithreadGapMethods implements Runnable {
         try {
             final long startTime = System.currentTimeMillis();
             String csvName = i + "primeList.csv";
-//            String binName = i + "primeList.bin";
+            String binName = i + "primeList.bin";
 
             File csvFile = new File(csvName);
             PrintWriter out = new PrintWriter(csvFile);
-//            FileOutputStream fileOs = new FileOutputStream(binName);
-//            ObjectOutputStream oos = new ObjectOutputStream(fileOs);
+            FileOutputStream fileOs = new FileOutputStream(binName);
+            ObjectOutputStream oos = new ObjectOutputStream(fileOs);
 
             System.out.println("Running thread " + i);
             int count = 0;
@@ -67,9 +67,9 @@ public class multithreadGapMethods implements Runnable {
                 /**/
 
                 //put primes in .bin file
-                /*
+                /**/
                 for (short gap: gapInterval) {
-                    oos.writeLong(gap);
+                    oos.writeShort(gap);
                 }
                 /* */
 
@@ -84,7 +84,7 @@ public class multithreadGapMethods implements Runnable {
                 }
             }
             out.close();
-//            oos.close();
+            oos.close();
 
             totalPrimes = multiSieve.getTotalCount();
             System.out.println("Total primes calculated for thread " + i + ": " + totalPrimes);

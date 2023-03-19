@@ -40,17 +40,17 @@ public class multithreadMethods implements Runnable {
     public void run() {
         try {
             final long startTime = System.currentTimeMillis();
-//            String csvName = i + "primeList.csv";
+            String csvName = i + "primeList.csv";
             String binName = i + "primeList.bin";
 
-//            File csvFile = new File(csvName);
-//            PrintWriter out = new PrintWriter(csvFile);
+            File csvFile = new File(csvName);
+            PrintWriter out = new PrintWriter(csvFile);
             FileOutputStream fileOs = new FileOutputStream(binName);
             ObjectOutputStream oos = new ObjectOutputStream(fileOs);
 
             System.out.println("Running thread " + i);
             int count = 0;
-            for (int j = 0; j < repetitions; j++)
+            for (int j = 1; j <= repetitions; j++)
             {
                 //creates new array of primes
                 long[] primeInterval = multiSieve.sieveFindInterval(start + ((long) add * j), add, primeArray,
@@ -58,7 +58,7 @@ public class multithreadMethods implements Runnable {
 
                 int numPrimes = multiSieve.getIntervalCount();
                 //put primes in .csv file
-                /*
+                /**/
                 for(long prime: primeInterval){
                     out.println(prime);
                 }
@@ -73,14 +73,16 @@ public class multithreadMethods implements Runnable {
 
                 listLengthOfNewPrimes = numPrimes + 10000;
 
-                if (j%10000 == 0){
-                    System.out.println((start+ (long) add *10000L *count) + " to " + ((start+ (long) add *10000L * count)+add* 10000L) + " has been calculated");
+                long numOfRepeats=100;
+                long intTime = System.currentTimeMillis();
+                if (j%numOfRepeats == 0){
+                    System.out.println((start+ (long) add *numOfRepeats *count) +
+                            " to " + ((start+ (long) add *numOfRepeats * count)+add* numOfRepeats) +
+                            " has been calculated in " + (intTime-startTime)/1000 + " seconds");
                     count++;
-                    long intTime = System.currentTimeMillis();
-                    System.out.println((intTime-startTime)/1000 + " seconds have passed");
                 }
             }
-//            out.close();
+            out.close();
             oos.close();
 
             totalPrimes = multiSieve.getTotalCount();

@@ -61,12 +61,12 @@ public class sieveMethods {
         // }
         // repeat for all odd ints below sqrt(n)
 
-        for (Integer oIndex = 1; 2 * oIndex + 1 < (int) (Math.sqrt(num)) + 1; oIndex++) {
-            if (!boolOddArray[oIndex]) {
-
-                for (int comIndex = (((2 * oIndex) + 1) * ((2 * oIndex) + 1) - 1) / 2; comIndex < (num + 1)
-                        / 2; comIndex += (2 * oIndex) + 1) {
-                    boolOddArray[comIndex] = true;
+        for (int oddIndex = 1; 2 * oddIndex + 1 < (int) (Math.sqrt(num)) + 1; oddIndex++) {
+            if (!boolOddArray[oddIndex]) {
+                for (int compositeIndex = (((2 * oddIndex) + 1) * ((2 * oddIndex) + 1) - 1) / 2;
+                     compositeIndex < (num + 1) / 2;
+                     compositeIndex += (2 * oddIndex) + 1) {
+                    boolOddArray[compositeIndex] = true;
                 }
             }
         }
@@ -77,7 +77,7 @@ public class sieveMethods {
             if (!boolOddArray[oddIndex]) {
                 primeArray[startCount] = 2 * oddIndex + 1;
                 startCount++;
-                totalCount++;
+//                totalCount++;
             }
         }
 
@@ -96,7 +96,7 @@ public class sieveMethods {
     // be warned the array is too big so the last multiple entries are going to be 0
     //use sieve.getIntervalCount to find the true amount of primes so that you dont print 0's
     public long[] sieveFindInterval(long start, int add, int[] primeArray, int numOfNewPrimes) {
-
+        long multiple;
 
 
         boolean[] boolAddArray = new boolean[(int) ((add + 1) / 2)];
@@ -105,12 +105,17 @@ public class sieveMethods {
                 break;
             }
 
-            long multiple = (start - ((start) % prime)) + prime;
-            if (multiple % 2 == 0) {
-                multiple += prime;
+            if (start == 0){
+                multiple = prime*prime;
+                boolAddArray[0] = true;
+            } else{
+                multiple = (start - ((start) % prime)) + prime;
+                if (multiple % 2 == 0) {
+                    multiple += prime;
+                }
             }
 
-            for (long composite = multiple; composite < start + add; composite += 2L * prime) {
+            for (long composite = multiple; composite < start + add; composite += 2 * prime) {
                 boolAddArray[(int) (composite - start - 1) / 2] = true;
             }
         }
