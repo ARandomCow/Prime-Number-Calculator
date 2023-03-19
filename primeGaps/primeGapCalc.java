@@ -21,8 +21,8 @@ public class primeGapCalc {
         final long startTime = System.currentTimeMillis();
 
         //--------------------------------------------------------------------------------------------------
-        int primeMax = 1000;
-        int numOfPrimes = 200;
+        int primeMax = 1000000;
+        int numOfPrimes = 200000;
         //its the number of primes - 1 (because this algorithm doesnt worry about 2 or multiples of it)
         //primeMax = 100, numOfPrimes = 24
         //if primeMax = 1,000 then numOfPrimes = 167
@@ -42,6 +42,8 @@ public class primeGapCalc {
 
         long startCount = erat.getStartCount();
 //        System.out.println(startCount + " is the amount of primes below " + primeMax);
+
+/*
         for (int i = 0; i<gapArray.length; i++){
         System.out.print(gapArray[i] + " | ");
         }
@@ -52,19 +54,19 @@ public class primeGapCalc {
             System.out.print(prime + " | ");
         }
         System.out.println("");
-
+*/
         final long firstEndTime = System.currentTimeMillis();
         System.out.println("Initial execution time: " + (firstEndTime - startTime) + " milliseconds");
 
-        long start = primeMax;
-        int add = 1000;
-        int primeArrayLength = 500;
+        long start = 0;
+        int add = 1_000_000;
+        int primeArrayLength = 100_000;
         //repeat should be initialized as 1 + (primeMax/add)
         int repeat = 1;
-        int numOfRepeats = 2;
+        int numOfRepeats = 1000;
         int intervalCount;
         long totalCount = erat.getTotalCount();
-        int checkInterval = 20;
+        int checkInterval = 200;
         long bufferstart = start;
 /*
                 File csvFile = new File("primeList.csv");
@@ -95,8 +97,8 @@ public class primeGapCalc {
                 }
 /**/
 
-//        while (repeat<numOfRepeats)
-//        {
+        while (repeat<=numOfRepeats)
+        {
             short[] gapIntervalArray = erat.sieveFindInterval(start, add, gapArray, primeArrayLength);
             //            System.out.println(primeList.length);
             //          for(int i =0; i<primeList.length; i++){
@@ -119,6 +121,9 @@ public class primeGapCalc {
                 System.out.println("Time taken = " + (intervalEndTime-intervalStartTime) + " milliseconds");
 
                 intervalStartTime = System.currentTimeMillis();
+
+
+
             }
             //            if(repeat == 9998){
             //                for(int i =0; i<primeList.length; i++){
@@ -149,17 +154,15 @@ public class primeGapCalc {
             intervalCount = erat.getIntervalCount()+20000;
             primeArrayLength = intervalCount;
 
-//        }
+        }
 
 //                out.close();
 
 
 //        System.out.println("prime: " + prime);
-        for (short gap: gapIntervalArray){
-            prime+=gap;
-            System.out.println(prime + " | ");
-        }
-        System.out.println("");
+        long prime = 2;
+//        System.out.println("gap[0] = " + gapIntervalArray[0]);
+
         final long finalEndTime = System.currentTimeMillis();
         System.out.println("Final execution time: " + (finalEndTime - startTime) + " milliseconds");
 

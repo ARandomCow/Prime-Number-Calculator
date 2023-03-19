@@ -52,7 +52,6 @@ public class sieveGapMethods {
         startCount = 0;
         int currentLargestPrime = 2;
         short[] gapArray = new short[(numOfGaps)];
-        gapArray[0] = 2;
 
         // boolean list for all odd numbers
         // if index = n, actual number = 2n+1
@@ -70,7 +69,7 @@ public class sieveGapMethods {
 
         for (Integer oddIndex = 1; 2 * oddIndex + 1 < (int) (Math.sqrt(num)) + 1; oddIndex++) {
             if (!boolOddArray[oddIndex]) {
-                for (int compositeIndex = (((2 * oddIndex) + 1) * ((2 * oddIndex) + 1) - 1) / 2;
+                for (int compositeIndex = ( ((2 * oddIndex) + 1) * ((2 * oddIndex) + 1) - 1) / 2;
                      compositeIndex < (num + 1) / 2;
                      compositeIndex += (2 * oddIndex) + 1) {
                     boolOddArray[compositeIndex] = true;
@@ -85,7 +84,7 @@ public class sieveGapMethods {
                 gapArray[startCount] = (short)((2 * oddIndex + 1) - currentLargestPrime);
                 currentLargestPrime += gapArray[startCount];
                 startCount++;
-                totalCount++;
+//                totalCount++;
             }
         }
 
@@ -105,6 +104,7 @@ public class sieveGapMethods {
     //use sieve.getIntervalCount to find the true amount of primes so that you dont print 0's
     public short[] sieveFindInterval(long start, int add, short[] gapArray, int numOfNewGaps) {
         long prime = 2;
+        long multiple;
 //        System.out.println("sieveFindInterval is working");
         long basePrime = findBasePrime(start, gapArray);
 //        System.out.println("basePrime = " + basePrime);
@@ -118,9 +118,15 @@ public class sieveGapMethods {
                 break;
             }
 
-            long multiple = (start - ((start) % prime)) + prime;
-            if (multiple % 2 == 0) {
-                multiple += prime;
+
+            if (start == 0){
+                multiple = prime*prime;
+                boolAddArray[0] = true;
+            } else{
+                multiple = (start - ((start) % prime)) + prime;
+                if (multiple % 2 == 0) {
+                    multiple += prime;
+                }
             }
 
             for (long composite = multiple; composite < start + add; composite += 2 * prime) {
@@ -148,6 +154,9 @@ public class sieveGapMethods {
 
     public static long findBasePrime(long start, short[] gapArray){
 //        System.out.println("findBasePrime is working");
+        if (start == 0){
+            return 2;
+        }
         long numToTest = start;
         for (int i = 0; i< 1000; i++){
             if (isPrime(numToTest, gapArray)){

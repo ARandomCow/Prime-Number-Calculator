@@ -1,4 +1,4 @@
-/*
+
 
 package primeGaps;
 
@@ -9,10 +9,10 @@ public class multithreadGapMethods implements Runnable {
 
     long start;
     int add;
-    int[] primeArray;
-    int listLengthOfNewPrimes;
+    short[] gapArray;
+    int listLengthOfGapInterval;
     int i;
-    long[] primeInterval;
+    short[] gapInterval;
     sieveGapMethods multiSieve = new sieveGapMethods();
     int numThreads;
     long totalInterval;
@@ -24,70 +24,66 @@ public class multithreadGapMethods implements Runnable {
     }
 
     public multithreadGapMethods(long startingNum, int addNum,
-                                 int[] primeList, int newPrimeLength, int number,
+                                 short[] baseGapArray, int newGapArrayLength, int number,
                                  int numOfThreads, long totalIntervalNum) {
         start = startingNum;
         add = addNum;
-        listLengthOfNewPrimes = newPrimeLength;
-        primeArray = primeList;
+        listLengthOfGapInterval = newGapArrayLength;
+        gapArray = baseGapArray;
         i = number;
         numThreads = numOfThreads;
         totalInterval = totalIntervalNum;
         repetitions = (int) (totalInterval/add);
 
-        multiSieve = new sieveGapMethods(primeArray);
+        multiSieve = new sieveGapMethods(gapArray);
     }
 
     //@Override
     public void run() {
         try {
             final long startTime = System.currentTimeMillis();
-//            String csvName = i + "primeList.csv";
-            String binName = i + "primeList.bin";
+            String csvName = i + "primeList.csv";
+//            String binName = i + "primeList.bin";
 
-//            File csvFile = new File(csvName);
-//            PrintWriter out = new PrintWriter(csvFile);
-            FileOutputStream fileOs = new FileOutputStream(binName);
-            ObjectOutputStream oos = new ObjectOutputStream(fileOs);
+            File csvFile = new File(csvName);
+            PrintWriter out = new PrintWriter(csvFile);
+//            FileOutputStream fileOs = new FileOutputStream(binName);
+//            ObjectOutputStream oos = new ObjectOutputStream(fileOs);
 
             System.out.println("Running thread " + i);
             int count = 0;
-            for (int j = 0; j < repetitions; j++)
+            for (int j = 1; j <= repetitions; j++)
             {
                 //creates new array of primes
-                long[] primeInterval = multiSieve.sieveFindInterval(start + ((long) add * j), add, primeArray,
-                        listLengthOfNewPrimes);
+                short[] gapInterval = multiSieve.sieveFindInterval(start + ((long) add * j), add, gapArray,
+                        listLengthOfGapInterval);
 
                 int numPrimes = multiSieve.getIntervalCount();
                 //put primes in .csv file
-                /*
-                for(long prime: primeInterval){
-                    out.println(prime);
+                /**/
+                for(short gap: gapInterval){
+                    out.println(gap);
                 }
                 /**/
 
                 //put primes in .bin file
-                /**/
-
-
-/*
-
-                for (long prime: primeInterval) {
-                    oos.writeLong(prime);
+                /*
+                for (short gap: gapInterval) {
+                    oos.writeLong(gap);
                 }
                 /* */
-/*
-                listLengthOfNewPrimes = numPrimes + 10000;
 
-                if (j%10000 == 0){
-                    System.out.println((start+ (long) add *10000L *count) + " to " + ((start+ (long) add *10000L * count)+add* 10000L) + " has been calculated");
+                listLengthOfGapInterval = numPrimes + 10000;
+                long numOfRepeats=100;
+                if (j%numOfRepeats == 0){
+                    System.out.println((start+ (long) add *numOfRepeats *count) + " to " + ((start+ (long) add *numOfRepeats * count)+add* numOfRepeats) + " has been calculated");
                     count++;
                     long intTime = System.currentTimeMillis();
                     System.out.println((intTime-startTime)/1000 + " seconds have passed");
                 }
             }
-//            out.close();
-            oos.close();
+            out.close();
+//            oos.close();
 
             totalPrimes = multiSieve.getTotalCount();
             System.out.println("Total primes calculated for thread " + i + ": " + totalPrimes);
@@ -95,18 +91,18 @@ public class multithreadGapMethods implements Runnable {
             /**/
 
 
-/*
+
         } catch (IOException e) {
             e.printStackTrace();}
         /* */
 
 
 
-/*
+
     }
 
-    public long[] getPrimes() {
-        return primeInterval;
+    public short[] getGaps() {
+        return gapInterval;
     }
 
     public long getTotalCount() {
@@ -115,4 +111,4 @@ public class multithreadGapMethods implements Runnable {
 }
 
 
- */
+
