@@ -1,4 +1,4 @@
-package primeSieve;
+package primeGaps;
 
 import java.io.*;
 
@@ -13,7 +13,7 @@ import java.io.*;
 
 
 
-public class primeCalc {
+public class primeGapCalc {
 
     public static void main( String[] args ) throws FileNotFoundException
     {
@@ -21,8 +21,8 @@ public class primeCalc {
         final long startTime = System.currentTimeMillis();
 
         //--------------------------------------------------------------------------------------------------
-        Integer primeMax = 1000000;
-        int numOfPrimes = 78497;
+        int primeMax = 1000000;
+        int numOfPrimes = 200000;
         //its the number of primes - 1 (because this algorithm doesnt worry about 2 or multiples of it)
         //primeMax = 100, numOfPrimes = 24
         //if primeMax = 1,000 then numOfPrimes = 167
@@ -32,29 +32,38 @@ public class primeCalc {
         //if primeMax = 1,000,000,000 then numOfPrimes = 50847533
         //--------------------------------------------------------------------------------------------------
 
-        sieveMethods erat = new sieveMethods(primeMax);
+        sieveGapMethods erat = new sieveGapMethods(primeMax);
 
-        int[] primeArray = erat.sieveOfEratosthenes(numOfPrimes);
+        short[] gapArray = erat.sieveOfEratosthenes(numOfPrimes);
 
         //        for(int i =0; i<primeArray.length; i++){
         //            System.out.println(primeArray[i]);
         //        }
 
         long startCount = erat.getStartCount();
-        System.out.println(startCount + " is the amount of primes below " + primeMax);
-//        for(int i = 0; i<10; i++){
-//            System.out.println(primeArray[i]);
-//        }
+//        System.out.println(startCount + " is the amount of primes below " + primeMax);
 
+/*
+        for (int i = 0; i<gapArray.length; i++){
+        System.out.print(gapArray[i] + " | ");
+        }
+        System.out.println("");
+        int prime = 2;
+        for(int i = 0; i<gapArray.length; i++){
+            prime += gapArray[i];
+            System.out.print(prime + " | ");
+        }
+        System.out.println("");
+*/
         final long firstEndTime = System.currentTimeMillis();
         System.out.println("Initial execution time: " + (firstEndTime - startTime) + " milliseconds");
 
         long start = 0;
-        int add = 1_000_000;
-        int primeArrayLength = 100_000;
+        int add = 1_000;
+        int primeArrayLength = 1000;
         //repeat should be initialized as 1 + (primeMax/add)
         int repeat = 1;
-        int numOfRepeats = 1000;
+        int numOfRepeats = 100;
         int intervalCount;
         long totalCount = erat.getTotalCount();
         int checkInterval = 200;
@@ -87,10 +96,10 @@ public class primeCalc {
                     out.println((i+2) + " | " + primeArray[i]);
                 }
 /**/
-
+        int prime = 2;
         while (repeat<=numOfRepeats)
         {
-            long[] primeList = erat.sieveFindInterval(start, add, primeArray, primeArrayLength);
+            short[] gapIntervalArray = erat.sieveFindInterval(start, add, gapArray, primeArrayLength);
             //            System.out.println(primeList.length);
             //          for(int i =0; i<primeList.length; i++){
             //              System.out.println(primeList[i]);
@@ -141,16 +150,21 @@ public class primeCalc {
             totalCount = erat.getTotalCount();
             intervalCount = erat.getIntervalCount()+20000;
             primeArrayLength = intervalCount;
-//            System.out.println(primeList[0] + " | " + primeList[1]);
 
-//            for(int i = 0; i<10; i++){
-//                System.out.println(primeList[i]);
-//            }
+            for (short gap: gapIntervalArray){
+                System.out.print(prime + ", ");
+                prime += gap;
+            }
+            System.out.println("");
 
         }
 
 //                out.close();
 
+
+//        System.out.println("prime: " + prime);
+
+//        System.out.println("gap[0] = " + gapIntervalArray[0]);
 
         final long finalEndTime = System.currentTimeMillis();
         System.out.println("Final execution time: " + (finalEndTime - startTime) + " milliseconds");

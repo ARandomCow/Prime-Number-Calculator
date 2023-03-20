@@ -1,29 +1,34 @@
-package primeSieve;
+package primeGaps;
 
 import java.lang.Math;
 import java.util.Arrays;
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
 
-public class sieveMethods {
+public class sieveGapMethods {
     int num;
     int startCount;
     int intervalCount;
     long totalCount;
-    int[] primeArray;
+    short[] gapArray;
 
 
     // ignore
-    public sieveMethods() {
+    public sieveGapMethods() {
         num = 10000;
         totalCount = 0;
     }
 
     //create new object with a built in array
-    public sieveMethods(int[] arrayOfPrimes) {
-        primeArray = arrayOfPrimes;
+    public sieveGapMethods(short[] arrayOfGaps) {
+        gapArray = arrayOfGaps;
     }
 
     //create new object to build a starting array
-    public sieveMethods(int startingNum) {
+    public sieveGapMethods(int startingNum) {
         num = startingNum;
         totalCount = 0;
     }
@@ -43,9 +48,10 @@ public class sieveMethods {
 
 
     // returns a prime list from 0 to startingNum
-    public int[] sieveOfEratosthenes(int numOfPrimes) {
+    public short[] sieveOfEratosthenes(int numOfGaps) {
         startCount = 0;
-        int[] primeArray = new int[(numOfPrimes)];
+        int currentLargestPrime = 2;
+        short[] gapArray = new short[(numOfGaps)];
 
         // boolean list for all odd numbers
         // if index = n, actual number = 2n+1
@@ -61,9 +67,9 @@ public class sieveMethods {
         // }
         // repeat for all odd ints below sqrt(n)
 
-        for (int oddIndex = 1; 2 * oddIndex + 1 < (int) (Math.sqrt(num)) + 1; oddIndex++) {
+        for (Integer oddIndex = 1; 2 * oddIndex + 1 < (int) (Math.sqrt(num)) + 1; oddIndex++) {
             if (!boolOddArray[oddIndex]) {
-                for (int compositeIndex = (((2 * oddIndex) + 1) * ((2 * oddIndex) + 1) - 1) / 2;
+                for (int compositeIndex = ( ((2 * oddIndex) + 1) * ((2 * oddIndex) + 1) - 1) / 2;
                      compositeIndex < (num + 1) / 2;
                      compositeIndex += (2 * oddIndex) + 1) {
                     boolOddArray[compositeIndex] = true;
@@ -75,7 +81,8 @@ public class sieveMethods {
         // put number in primeArray
         for (int oddIndex = 0; oddIndex < ((num + 1) / 2); oddIndex++) {
             if (!boolOddArray[oddIndex]) {
-                primeArray[startCount] = 2 * oddIndex + 1;
+                gapArray[startCount] = (short)((2 * oddIndex + 1) - currentLargestPrime);
+                currentLargestPrime += gapArray[startCount];
                 startCount++;
 //                totalCount++;
             }
@@ -89,21 +96,28 @@ public class sieveMethods {
          * }
          *
          */
-        return primeArray;
+        return Arrays.copyOf(gapArray, startCount);
     }
 
     // returns an array of primes in between start and start+add
     // be warned the array is too big so the last multiple entries are going to be 0
     //use sieve.getIntervalCount to find the true amount of primes so that you dont print 0's
-    public long[] sieveFindInterval(long start, int add, int[] primeArray, int numOfNewPrimes) {
+    public short[] sieveFindInterval(long start, int add, short[] gapArray, int numOfNewGaps) {
+        long prime = 2;
         long multiple;
-
+//        System.out.println("sieveFindInterval is working");
+        long basePrime = findBasePrime(start, gapArray);
+//        System.out.println("basePrime = " + basePrime);
+        int biggestNeededPrime = (int) Math.sqrt(start + add) + 1;
 
         boolean[] boolAddArray = new boolean[(int) ((add + 1) / 2)];
-        for (Integer prime : primeArray) {
-            if (prime > (int) Math.sqrt(start + add) + 1) {
+        for (short gap : gapArray)
+        {
+            prime += gap;
+            if (prime > biggestNeededPrime) {
                 break;
             }
+
 
             if (start == 0){
                 multiple = prime*prime;
@@ -120,20 +134,63 @@ public class sieveMethods {
             }
         }
 
-        long[] primeList = new long[(numOfNewPrimes)];
+        short[] gapIntervalArray = new short[(numOfNewGaps)];
 
         intervalCount = 0;
 
         for (Integer oddIndex = 0; oddIndex < boolAddArray.length ; oddIndex++) {
             if (!boolAddArray[oddIndex]) {
-                primeList[intervalCount] = (2L * oddIndex) + 1 + start;
+                gapIntervalArray[intervalCount] = (short) ((2 * oddIndex) + 1 + start- basePrime);
+                basePrime += gapIntervalArray[intervalCount];
                 intervalCount++;
                 totalCount++;
             }
         }
 
 
-        return Arrays.copyOf(primeList, intervalCount);
+        return Arrays.copyOf(gapIntervalArray, intervalCount);
+    }
+
+
+    public static long findBasePrime(long start, short[] gapArray){
+//        System.out.println("findBasePrime is working");
+        if (start == 0){
+            return 2;
+        }
+        long numToTest = start;
+        for (int i = 0; i< 1000; i++){
+            if (isPrime(numToTest, gapArray)){
+//                System.out.println("Base prime: " + numToTest);
+                return numToTest;
+            }
+//            System.out.println(numToTest + " is not prime");
+            numToTest--;
+        }
+        return 3;
+    }
+
+    public static boolean isPrime(long number, short[] gapArray){
+//        System.out.println("isPrime is working");
+        long prime = 2;
+        if (number%prime== 0) {
+//            System.out.println(number +" is a multiple of 2");
+            return false;
+        }
+        long biggestPrime = (long)Math.sqrt(number);
+//        System.out.println("biggestPrime = " + biggestPrime);
+        for (short gap: gapArray)
+        {
+            prime += gap;
+//            System.out.println("prime now equals " + prime);
+            if (number%prime == 0){
+                return false;
+            }
+            if (prime > biggestPrime){
+                return true;
+            }
+        }
+//        System.out.println(number + " is prime");
+        return true;
     }
 
 }

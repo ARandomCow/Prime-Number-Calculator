@@ -1,39 +1,41 @@
-package primeSieve;
+
+
+package primeGaps;
 
 
 import java.io.*;
 
-public class multithreadMethods implements Runnable {
+public class multithreadGapMethods implements Runnable {
 
     long start;
     int add;
-    int[] primeArray;
-    int listLengthOfNewPrimes;
+    short[] gapArray;
+    int listLengthOfGapInterval;
     int i;
-    long[] primeInterval;
-    sieveMethods multiSieve = new sieveMethods();
+    short[] gapInterval;
+    sieveGapMethods multiSieve = new sieveGapMethods();
     int numThreads;
     long totalInterval;
     int repetitions;
     long totalPrimes;
 
-    public multithreadMethods() {
+    public multithreadGapMethods() {
 
     }
 
-    public multithreadMethods(long startingNum, int addNum,
-                              int[] primeList, int newPrimeLength, int number,
-                              int numOfThreads, long totalIntervalNum) {
+    public multithreadGapMethods(long startingNum, int addNum,
+                                 short[] baseGapArray, int newGapArrayLength, int threadNumber,
+                                 int numOfThreads, long totalIntervalNum) {
         start = startingNum;
         add = addNum;
-        listLengthOfNewPrimes = newPrimeLength;
-        primeArray = primeList;
-        i = number;
+        listLengthOfGapInterval = newGapArrayLength;
+        gapArray = baseGapArray;
+        i = threadNumber;
         numThreads = numOfThreads;
         totalInterval = totalIntervalNum;
         repetitions = (int) (totalInterval/add);
 
-        multiSieve = new sieveMethods(primeArray);
+        multiSieve = new sieveGapMethods(gapArray);
     }
 
     //@Override
@@ -50,29 +52,28 @@ public class multithreadMethods implements Runnable {
 
             System.out.println("Running thread " + i);
             int count = 0;
-            for (int j = 1; j <= repetitions; j++)
+            for (int j = 0; j < repetitions; j++)
             {
                 //creates new array of primes
-                long[] primeInterval = multiSieve.sieveFindInterval(start + ((long) add * j), add, primeArray,
-                        listLengthOfNewPrimes);
+                short[] gapInterval = multiSieve.sieveFindInterval(start + ((long) add * j), add, gapArray,
+                        listLengthOfGapInterval);
 
                 int numPrimes = multiSieve.getIntervalCount();
                 //put primes in .csv file
                 /**/
-                for(long prime: primeInterval){
-                    out.println(prime);
+                for(short gap: gapInterval){
+                    out.println(gap);
                 }
                 /**/
 
                 //put primes in .bin file
                 /**/
-                for (long prime: primeInterval) {
-                    oos.writeLong(prime);
+                for (short gap: gapInterval) {
+                    oos.writeShort(gap);
                 }
                 /* */
 
-                listLengthOfNewPrimes = numPrimes + 10000;
-
+                listLengthOfGapInterval = numPrimes + 10000;
                 long numOfRepeats=100;
                 long intTime = System.currentTimeMillis();
                 if (j%numOfRepeats == 0){
@@ -89,16 +90,26 @@ public class multithreadMethods implements Runnable {
             System.out.println("Total primes calculated for thread " + i + ": " + totalPrimes);
 //            System.out.println("Last prime in list: " + primeInterval[primeInterval.length-1]);
             /**/
+
+
+
         } catch (IOException e) {
             e.printStackTrace();}
         /* */
+
+
+
+
     }
 
-    public long[] getPrimes() {
-        return primeInterval;
+    public short[] getGaps() {
+        return gapInterval;
     }
 
     public long getTotalCount() {
         return multiSieve.getTotalCount();
     }
 }
+
+
+

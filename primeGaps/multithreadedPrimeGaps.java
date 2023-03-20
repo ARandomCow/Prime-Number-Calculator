@@ -1,13 +1,15 @@
-package primeSieve;
 
 
-public class multithreadedPrimes {
+package primeGaps;
+
+
+public class multithreadedPrimeGaps {
 
     public static void main(String[] args) {
 
         final long startTime = System.currentTimeMillis();
 
-        Integer primeMax = 1_000_000;
+        int primeMax = 1_000_000;
         int numOfPrimes = 100_000;
         // its the number of primes - 1 (because this algorithm doesnt worry about 2 or
         // multiples of it)
@@ -19,9 +21,9 @@ public class multithreadedPrimes {
         // if primeMax = 1,000,000,000 then numOfPrimes = 50,847,533
         // --------------------------------------------------------------------------------------------------
 
-        sieveMethods erat = new sieveMethods(primeMax);
+        sieveGapMethods erat = new sieveGapMethods(primeMax);
 
-        int[] primeArray = erat.sieveOfEratosthenes(numOfPrimes);
+        short[] primeArray = erat.sieveOfEratosthenes(numOfPrimes);
 
         // for(int i =0; i<primeArray.length; i++){
         // System.out.println(primeArray[i]);
@@ -37,14 +39,14 @@ public class multithreadedPrimes {
         int newPrimeLength = 100_000;
         // optimal numOfThreads ~ the amount of cores you CPU has (for my laptop I used 5 threads)
         int numOfThreads = 1;
-        long startDifference = 200_000_000L;
+        long startDifference = 100_000_000L;
 
-        multithreadMethods threadi = new multithreadMethods(start, 1, primeArray,
+        multithreadGapMethods threadi = new multithreadGapMethods(start, 1, primeArray,
                 newPrimeLength, 1, numOfThreads, startDifference);
         Thread t1 = new Thread(threadi);
 
         for (int i = 0; i < numOfThreads; i++) {
-            threadi = new multithreadMethods(start + (startDifference * i),
+            threadi = new multithreadGapMethods(start + (startDifference * i),
                     add, primeArray, newPrimeLength, i, numOfThreads, startDifference);
             t1 = new Thread(threadi);
             t1.start();
@@ -61,3 +63,4 @@ public class multithreadedPrimes {
     }
 
 }
+
