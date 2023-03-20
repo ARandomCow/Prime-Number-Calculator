@@ -39,7 +39,7 @@ public class multithreadedPrimeGaps {
         int newPrimeLength = 100_000;
         // optimal numOfThreads ~ the amount of cores you CPU has (for my laptop I used 5 threads)
         int numOfThreads = 1;
-        long startDifference = 200_000_000L;
+        long startDifference = 100_000_000L;
 
         multithreadGapMethods threadi = new multithreadGapMethods(start, 1, primeArray,
                 newPrimeLength, 1, numOfThreads, startDifference);
