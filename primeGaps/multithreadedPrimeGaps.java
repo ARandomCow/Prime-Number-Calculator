@@ -1,12 +1,13 @@
-
-
 package primeGaps;
+
+import java.util.Scanner;
 
 
 public class multithreadedPrimeGaps {
 
     public static void main(String[] args) {
 
+        Scanner input = new Scanner(System.in);
         final long startTime = System.currentTimeMillis();
 
         int primeMax = 1_000_000;
@@ -39,25 +40,31 @@ public class multithreadedPrimeGaps {
         int newPrimeLength = 100_000;
         // optimal numOfThreads ~ the amount of cores you CPU has (for my laptop I used 5 threads)
         int numOfThreads = 1;
-        long startDifference = 100_000_000L;
+        long startDifference = 1_000_000_000L;
 
         multithreadGapMethods threadi = new multithreadGapMethods(start, 1, primeArray,
                 newPrimeLength, 1, numOfThreads, startDifference);
         Thread t1 = new Thread(threadi);
+        String thing = "beans";
+        int something = 0;
+        while (!thing.equals("STOP")) {
+            thing = input.nextLine();
 
-        for (int i = 0; i < numOfThreads; i++) {
-            threadi = new multithreadGapMethods(start + (startDifference * i),
-                    add, primeArray, newPrimeLength, i, numOfThreads, startDifference);
-            t1 = new Thread(threadi);
-            t1.start();
+            for (int i = something; i < numOfThreads; i++) {
+                threadi = new multithreadGapMethods(start + (startDifference * i),
+                        add, primeArray, newPrimeLength, i, numOfThreads, startDifference);
+                t1 = new Thread(threadi);
+                t1.start();
+            }
+
+            try {
+                t1.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            something += numOfThreads;
         }
-
-        try {
-            t1.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         final long endTime = System.currentTimeMillis();
         System.out.println("Total time elapsed: " + (endTime - startTime) + " milliseconds");
     }

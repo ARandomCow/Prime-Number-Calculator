@@ -42,8 +42,8 @@ public class multithreadGapMethods implements Runnable {
     public void run() {
         try {
             final long startTime = System.currentTimeMillis();
-            String csvName = i + "primeList.csv";
-            String binName = i + "primeList.bin";
+            String csvName = i + "bil_to_" + (i+1) + "bil.csv";
+            String binName = i + "bil_to_" + (i+1) + "bil.bin";
 
             File csvFile = new File(csvName);
             PrintWriter out = new PrintWriter(csvFile);
