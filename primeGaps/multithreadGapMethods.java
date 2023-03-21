@@ -74,7 +74,7 @@ public class multithreadGapMethods implements Runnable {
                 /* */
 
                 listLengthOfGapInterval = numPrimes + 10000;
-                long numOfRepeats=100;
+                long numOfRepeats=1000;
                 long intTime = System.currentTimeMillis();
                 if (j%numOfRepeats == 0){
                     System.out.println((start+ (long) add *numOfRepeats *count) +

@@ -40,7 +40,7 @@ public class multithreadedPrimeGaps {
         int newPrimeLength = 100_000;
         // optimal numOfThreads ~ the amount of cores you CPU has (for my laptop I used 5 threads)
         int numOfThreads = 1;
-        long startDifference = 1_000_000_000L;
+        long startDifference = 10_000_000_000L;
 
         multithreadGapMethods threadi = new multithreadGapMethods(start, 1, primeArray,
                 newPrimeLength, 1, numOfThreads, startDifference);
@@ -48,9 +48,8 @@ public class multithreadedPrimeGaps {
         String thing = "beans";
         int something = 0;
         while (!thing.equals("STOP")) {
-            thing = input.nextLine();
 
-            for (int i = something; i < numOfThreads; i++) {
+            for (int i = something; i < numOfThreads+something; i++) {
                 threadi = new multithreadGapMethods(start + (startDifference * i),
                         add, primeArray, newPrimeLength, i, numOfThreads, startDifference);
                 t1 = new Thread(threadi);
