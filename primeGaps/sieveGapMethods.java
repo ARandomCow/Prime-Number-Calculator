@@ -2,11 +2,6 @@ package primeGaps;
 
 import java.lang.Math;
 import java.util.Arrays;
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import java.math.*;
-import java.util.regex.*;
 
 public class sieveGapMethods {
     int num;
@@ -48,7 +43,7 @@ public class sieveGapMethods {
 
 
     // returns a prime list from 0 to startingNum
-    public short[] sieveOfEratosthenes(int numOfGaps) {
+    public short[] createGapArray(int numOfGaps) {
         startCount = 0;
         int currentLargestPrime = 2;
         short[] gapArray = new short[(numOfGaps)];
@@ -105,6 +100,7 @@ public class sieveGapMethods {
     public short[] sieveFindInterval(long start, int add, short[] gapArray, int numOfNewGaps) {
         long prime = 2;
         long multiple;
+//        System.out.println("start = " + start);
 //        System.out.println("sieveFindInterval is working");
         long basePrime = findBasePrime(start, gapArray);
 //        System.out.println("basePrime = " + basePrime);

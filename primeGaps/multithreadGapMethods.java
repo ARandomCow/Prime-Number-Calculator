@@ -42,8 +42,8 @@ public class multithreadGapMethods implements Runnable {
     public void run() {
         try {
             final long startTime = System.currentTimeMillis();
-            String csvName = i + "bil_to_" + (i+1) + "bil.csv";
-            String binName = i + "bil_to_" + (i+1) + "bil.bin";
+            String csvName = i + "0bil_to_" + (i+1) + "0bil.csv";
+            String binName = i + "0bil_to_" + (i+1) + "0bil.bin";
 
             File csvFile = new File(csvName);
             PrintWriter out = new PrintWriter(csvFile);
@@ -52,10 +52,10 @@ public class multithreadGapMethods implements Runnable {
 
             System.out.println("Running thread " + i);
             int count = 0;
-            for (int j = 0; j < repetitions; j++)
+            for (int j = 1; j <= repetitions; j++)
             {
                 //creates new array of primes
-                short[] gapInterval = multiSieve.sieveFindInterval(start + ((long) add * j), add, gapArray,
+                short[] gapInterval = multiSieve.sieveFindInterval(start + ((long) add * (j-1)), add, gapArray,
                         listLengthOfGapInterval);
 
                 int numPrimes = multiSieve.getIntervalCount();

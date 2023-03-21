@@ -34,7 +34,7 @@ public class primeGapCalc {
 
         sieveGapMethods erat = new sieveGapMethods(primeMax);
 
-        short[] gapArray = erat.sieveOfEratosthenes(numOfPrimes);
+        short[] gapArray = erat.createGapArray(numOfPrimes);
 
         //        for(int i =0; i<primeArray.length; i++){
         //            System.out.println(primeArray[i]);
