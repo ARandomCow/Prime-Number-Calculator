@@ -40,7 +40,7 @@ public class primeGapCalc {
         //            System.out.println(primeArray[i]);
         //        }
 
-        long startCount = erat.getStartCount();
+//        long startCount = erat.getStartCount();
 //        System.out.println(startCount + " is the amount of primes below " + primeMax);
 
 /*
@@ -155,7 +155,7 @@ public class primeGapCalc {
                 System.out.print(prime + ", ");
                 prime += gap;
             }
-            System.out.println("");
+            System.out.println();
 
         }
 

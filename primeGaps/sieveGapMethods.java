@@ -44,14 +44,15 @@ public class sieveGapMethods {
 
     // returns a prime list from 0 to startingNum
     public short[] createGapArray(int numOfGaps) {
-        startCount = 0;
-        int currentLargestPrime = 2;
+        startCount = 1;
+        int currentLargestPrimeIndex = 1;
         short[] gapArray = new short[(numOfGaps)];
 
         // boolean list for all odd numbers
         // if index = n, actual number = 2n+1
         boolean[] boolOddArray = new boolean[(num + 1) / 2];
         boolOddArray[0] = true;
+        gapArray[0] = 1;
 
         // bool[0] is true because 1 is not prime
 
@@ -62,9 +63,9 @@ public class sieveGapMethods {
         // }
         // repeat for all odd ints below sqrt(n)
 
-        for (Integer oddIndex = 1; 2 * oddIndex + 1 < (int) (Math.sqrt(num)) + 1; oddIndex++) {
+        for (int oddIndex = 1; 2 * oddIndex + 1 < (int) (Math.sqrt(num)) + 1; oddIndex++) {
             if (!boolOddArray[oddIndex]) {
-                for (int compositeIndex = ( ((2 * oddIndex) + 1) * ((2 * oddIndex) + 1) - 1) / 2;
+                for (int compositeIndex = ( 2*oddIndex * (oddIndex+1));
                      compositeIndex < (num + 1) / 2;
                      compositeIndex += (2 * oddIndex) + 1) {
                     boolOddArray[compositeIndex] = true;
@@ -72,12 +73,13 @@ public class sieveGapMethods {
             }
         }
 
+        boolOddArray[1] = true;
         // if(number = prime)
         // put number in primeArray
-        for (int oddIndex = 0; oddIndex < ((num + 1) / 2); oddIndex++) {
+        for (int oddIndex = 2; oddIndex < ((num + 1) / 2); oddIndex++) {
             if (!boolOddArray[oddIndex]) {
-                gapArray[startCount] = (short)((2 * oddIndex + 1) - currentLargestPrime);
-                currentLargestPrime += gapArray[startCount];
+                gapArray[startCount] = (short)((oddIndex - currentLargestPrimeIndex)*2);
+                currentLargestPrimeIndex = oddIndex;
                 startCount++;
 //                totalCount++;
             }
@@ -100,13 +102,26 @@ public class sieveGapMethods {
     public short[] sieveFindInterval(long start, int add, short[] gapArray, int numOfNewGaps) {
         long prime = 2;
         long multiple;
-//        System.out.println("start = " + start);
-//        System.out.println("sieveFindInterval is working");
+        short[] gapIntervalArray = new short[(numOfNewGaps)];
+        boolean startIsZero = false;
+        boolean[] boolAddArray = new boolean[(int) ((add + 1) / 2)];
         long basePrime = findBasePrime(start, gapArray);
-//        System.out.println("basePrime = " + basePrime);
+        int baseIndex;
         int biggestNeededPrime = (int) Math.sqrt(start + add) + 1;
 
-        boolean[] boolAddArray = new boolean[(int) ((add + 1) / 2)];
+        if (start == 0){
+            startIsZero = true;
+            boolAddArray[0] = true;
+            boolAddArray[1] = true;
+            gapIntervalArray[0] = 1;
+            intervalCount = 1;
+            totalCount++;
+            baseIndex = 1;
+        } else {
+            baseIndex = (int)((basePrime - start-1)/2);
+            intervalCount = 0;
+        }
+
         for (short gap : gapArray)
         {
             prime += gap;
@@ -115,9 +130,8 @@ public class sieveGapMethods {
             }
 
 
-            if (start == 0){
+            if (startIsZero){
                 multiple = prime*prime;
-                boolAddArray[0] = true;
             } else{
                 multiple = (start - ((start) % prime)) + prime;
                 if (multiple % 2 == 0) {
@@ -130,14 +144,13 @@ public class sieveGapMethods {
             }
         }
 
-        short[] gapIntervalArray = new short[(numOfNewGaps)];
 
-        intervalCount = 0;
 
-        for (Integer oddIndex = 0; oddIndex < boolAddArray.length ; oddIndex++) {
+
+        for (int oddIndex = 0; oddIndex < boolAddArray.length ; oddIndex++) {
             if (!boolAddArray[oddIndex]) {
-                gapIntervalArray[intervalCount] = (short) ((2 * oddIndex) + 1 + start- basePrime);
-                basePrime += gapIntervalArray[intervalCount];
+                gapIntervalArray[intervalCount] = (short) ((oddIndex - baseIndex)*2);
+                baseIndex = oddIndex;
                 intervalCount++;
                 totalCount++;
             }
