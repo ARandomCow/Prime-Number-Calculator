@@ -151,5 +151,67 @@ public class shortWheelFactoring {
 
 		return bigWheel;
 	}
+
+
+
+	public static int[] biggerIntWheel(short[] wheel, int totalWheelSize){
+		int wheelSize = totalWheelSize;
+//        for(boolean isPrime: wheel){
+//            System.out.print(isPrime + " ");
+//        }
+//        System.out.println();
+//        shout get    false, true
+//        should get   false, true, false, false, false, true
+
+//        find largest num after 1
+		short wheelScaling = wheel[1];
+//        roll small wheel around big wheel
+		int bigWheelSize = (wheel.length*wheelScaling) - wheel.length;
+
+		int index = 0;
+		int[] bigWheel = new int[bigWheelSize];
+		for (int num = 0; num < wheelScaling; num++) {
+			for (short prime : wheel) {
+				if( ((prime + (wheelSize * num))%wheelScaling != 0) ){
+					bigWheel[index] = prime + (wheelSize * num);
+					index++;
+				}
+			}
+		}
+
+
+		return bigWheel;
+	}
+
+
+
+	public static int[] biggerIntWheel(int[] wheel, int totalWheelSize){
+		int wheelSize = totalWheelSize;
+//        for(boolean isPrime: wheel){
+//            System.out.print(isPrime + " ");
+//        }
+//        System.out.println();
+//        shout get    false, true
+//        should get   false, true, false, false, false, true
+
+//        find largest num after 1
+		int wheelScaling = wheel[1];
+//        roll small wheel around big wheel
+		int bigWheelSize = (wheel.length*wheelScaling) - wheel.length;
+
+		int index = 0;
+		int[] bigWheel = new int[bigWheelSize];
+		for (int num = 0; num < wheelScaling; num++) {
+			for (int prime : wheel) {
+				if( ((prime + (wheelSize * num))%wheelScaling != 0) ){
+					bigWheel[index] = prime + (wheelSize * num);
+					index++;
+				}
+			}
+		}
+
+
+		return bigWheel;
+	}
 }
 

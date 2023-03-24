@@ -25,8 +25,8 @@ public class primeGapCalc {
         final long startTime = System.currentTimeMillis();
 
         //--------------------------------------------------------------------------------------------------
-        int primeMax = 1_000;
-        int numOfPrimes = 1_000;
+        int primeMax = 1_000_000_000;
+        int numOfPrimes = 51_000_000;
         //its the number of primes - 1 (because this algorithm doesnt worry about 2 or multiples of it)
         //primeMax = 100, numOfPrimes = 24
         //if primeMax = 1,000 then numOfPrimes = 167
@@ -59,9 +59,9 @@ public class primeGapCalc {
 //        System.out.print(gapArray[i-1] + " | ");
 //        }
 //        System.out.println();
-        System.out.println("primes: ");
+//        System.out.println("primes: ");
         int prime = 2;
-        for(int i = 0; i< gapArray.length; i++){
+        for(int i = 0; i< 100; i++){
             prime += gapArray[i];
             System.out.print(prime + " | ");
         }
@@ -73,8 +73,8 @@ public class primeGapCalc {
 
 
         long start = 0;
-        int add = 1_000_000;
-        int primeArrayLength = 100_000;
+        int add = 1_000;
+        int primeArrayLength = 1_000;
         int repeat = 1;
         int numOfRepeats = 0;
         int intervalCount;
@@ -103,7 +103,7 @@ public class primeGapCalc {
                 }
 /* */
 
-        prime = 2;
+        int intervalPrime = 2;
         while (repeat<=numOfRepeats)
         {
             short[] gapIntervalArray = erat.sieveFindInterval(start, add, gapArray, primeArrayLength);
