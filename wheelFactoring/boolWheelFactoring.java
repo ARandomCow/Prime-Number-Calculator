@@ -1,51 +1,64 @@
 
 
-public class wheelFactoring {
+public class boolWheelFactoring {
+
+    public static void main(String[] args) {
+        final long startTime = System.currentTimeMillis();
+        //mod 6 p = 3
+        boolean[] firstWheel = makeWheel();
+        //mod 30 p = 7
+        boolean[] medWheel = biggerWheel(firstWheel);
+//        mod 210, p = 11
+        boolean[] bigmedWheel = biggerWheel(medWheel);
+//        mod 2310
+        boolean[] bigWheel = biggerWheel(bigmedWheel);
+
+        boolean[] biggerWheel = biggerWheel(bigWheel);
+
+        boolean[] biggererWheel = biggerWheel(biggerWheel);
+
+        boolean[] biggestWheel = biggerWheel(biggererWheel);
+
+        boolean[] biggesterWheel = biggerWheel(biggestWheel);
+
+
+
+
+        int count = 0;
+//        for (int i = 0; i<biggerWheel.length; i++){
+//            if(biggerWheel[i]){
+//                System.out.println(i);
+//                count++;
+//            }
+//        }
+        System.out.println("count = " + count);
+        System.out.println("percent of number not prime = %" + (1.0-((double)count/biggestWheel.length))*100);
+
+        final long endTime = System.currentTimeMillis();
+        System.out.println("Total time elapsed: " + (endTime-startTime) + " milliseconds");
+    }
+
 
     public static boolean[] makeWheel(){
         int primeCount = 0;
-        int[] initialPrimeArray = new int[]{2};
-        for (int p: initialPrimeArray){
-            System.out.print(p + " ");
-        }
-        System.out.println();
-        int wheelSize = 1;
-        for (int prime: initialPrimeArray){
-            wheelSize*=prime;
-        }
-        boolean[] wheel = new boolean[wheelSize];
+
+        int wheelSize = 2;
+
+        boolean[] wheel = new boolean[]{false, true};
 //        0  1  2  3   4  5
 //        6  7  8  9  10 11
 //        12 13 14 15 16 17
 //        fill wheel with correct booleans
-        System.out.println("wheelSize = " + wheelSize);
 
-        for (int i = 0; i<wheel.length; i++){
-            for(int prime: initialPrimeArray){
-                wheel[i] = true;
-                if(i%prime == 0){
-                    wheel[i] = false;
-                    break;
-                }
-            }
 
-        }
-        for(boolean isPrime: wheel){
-            System.out.print(isPrime + " ");
-        }
-        System.out.println();
 //        shout get    false, true
 //        should get   false, true, false, false, false, true
 
 //        find largest num after 1
-        int wheelScaling = 2;
-        while (!wheel[wheelScaling%wheelSize]){
-            wheelScaling++;
-        }
-        System.out.println("wheelScaling = " + wheelScaling);
+        int wheelScaling = 3;
 //        roll small wheel around big wheel
         int bigWheelSize = wheelSize*wheelScaling;
-        System.out.println("bigWheelSize = " + bigWheelSize);
+
         boolean[] bigWheel = new boolean[bigWheelSize];
         for (int num = 0; num<bigWheelSize; num++){
             if (wheel[num%wheelSize]){
@@ -77,40 +90,6 @@ public class wheelFactoring {
 //        }
 //        return primes;
     }
-
-    public static void main(String[] args) {
-        int[] firstPrimes = new int[]{2};
-        //mod 6 p = 3
-        boolean[] firstWheel = makeWheel();
-        //mod 30 p = 7
-        boolean[] medWheel = biggerWheel(firstWheel);
-//        mod 210, p = 11
-        boolean[] bigmedWheel = biggerWheel(medWheel);
-//        mod 2310
-        boolean[] bigWheel = biggerWheel(bigmedWheel);
-
-        boolean[] biggerWheel = biggerWheel(bigWheel);
-
-//        boolean[] biggererWheel = biggerWheel(biggerWheel);
-
-//        boolean[] biggestWheel = biggerWheel(biggererWheel);
-
-//        boolean[] biggesterWheel = biggerWheel(biggestWheel);
-
-
-
-
-        int count = 0;
-        for (int i = 0; i<biggerWheel.length; i++){
-            if(biggerWheel[i]){
-//                System.out.println(i);
-                count++;
-            }
-        }
-        System.out.println("count = " + count);
-        System.out.println("percent of number not prime = %" + (1.0-((double)count/biggerWheel.length))*100);
-    }
-
 
 
 
@@ -151,4 +130,3 @@ public class wheelFactoring {
         return bigWheel;
     }
 }
-

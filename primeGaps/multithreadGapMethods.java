@@ -41,7 +41,7 @@ public class multithreadGapMethods implements Runnable {
 
             //initialize csv writer
             /**/
-            String csvName = i + "0bil_to_" + (i+1) + "0bil.csv";
+            String csvName = i + "bil_to_" + (i+1) + "bil.csv";
             File csvFile = new File(csvName);
             PrintWriter out = new PrintWriter(csvFile);
             /**/

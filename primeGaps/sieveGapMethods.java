@@ -1,7 +1,8 @@
 package primeGaps;
 
 import java.lang.Math;
-import java.util.Arrays;
+import java.util.*;
+import static primeGaps.shortWheelFactoring.*;
 
 public class sieveGapMethods {
     int num;
@@ -48,36 +49,122 @@ public class sieveGapMethods {
         int currentLargestPrimeIndex = 1;
         short[] gapArray = new short[(numOfGaps)];
 
+        short[] wheelMod6 = makeWheel();
+        short[] wheelMod30 = biggerWheel(wheelMod6, 6);
+//        short[] wheelMod210 = biggerWheel(wheelMod30, 30);
+//        short[] wheelMod2310 = biggerWheel(wheelMod210, 210);
+
+        short[] wheelInUse = wheelMod6;
+        int wheelMod = 6;
+        int wheelArrayLength = wheelInUse.length;
         // boolean list for all odd numbers
         // if index = n, actual number = 2n+1
-        boolean[] boolOddArray = new boolean[(num + 1) / 2];
-        boolOddArray[0] = true;
+        boolean[] oddIsPrime = new boolean[(num + 1) / 2];
+        oddIsPrime[2] = true;
+        oddIsPrime[3] = true;
+//        oddIsPrime[5] = true;
+
         gapArray[0] = 1;
 
-        // bool[0] is true because 1 is not prime
+//         bool[0] is true because 1 is not prime
+//
+//         starting with prime = 3
+//
+//         if (number = prime){
+//         all multiples of number are now not prime
+//         }
+//         repeat for all odd ints below sqrt(n)
 
-        // starting with prime = 3
 
-        // if (number = prime){
-        // all multiples of number are now not prime
-        // }
-        // repeat for all odd ints below sqrt(n)
+//        turns wheel mod 6 into the odd indexes to use less space
+        short[] indexedWheel = new short[wheelArrayLength];
+        int something = 0;
+        for(short num: wheelInUse){
+            indexedWheel[something] = (short)((num-1)/2);
+            something++;
+        }
 
-        for (int oddIndex = 1; 2 * oddIndex + 1 < (int) (Math.sqrt(num)) + 1; oddIndex++) {
-            if (!boolOddArray[oddIndex]) {
-                for (int compositeIndex = ( 2*oddIndex * (oddIndex+1));
-                     compositeIndex < (num + 1) / 2;
-                     compositeIndex += (2 * oddIndex) + 1) {
-                    boolOddArray[compositeIndex] = true;
+        System.out.println("indexed wheel mod " + wheelMod);
+        for (short p: indexedWheel){
+            System.out.print(p + " | ");
+        }
+        System.out.println();
+//        first lets see if i can roll a wheel and if that makes a difference
+//        oh shit the wheel turns things to potential primes, not primes to composites
+//        i gotta switch the booleans on everything
+        int wheelRoll = 0;
+        int indexedWheelMod = wheelMod/2;
+//        wheel displacement will be needed for segmented sieve
+//        when I start at like 1mil or whatever, 1mil%30 isnt 0 so I'll need to do some stuff
+        int wheelDisplacement = 0;
+
+//        this rolls the wheel along our thing from 0 to 1mil
+        boolean done = false;
+        while(!done){
+            for (short primeIndex: indexedWheel){
+                if ((primeIndex+(indexedWheelMod*wheelRoll))>= oddIsPrime.length){
+                    done = true;
+                    break;
+                }
+                oddIsPrime[primeIndex+(indexedWheelMod*wheelRoll)]=true;
+            }
+            wheelRoll++;
+        }
+
+
+//        create wheel gap thingy
+        short[] indexedGapWheel = new short[wheelArrayLength];
+        for(int i = 1; i<indexedGapWheel.length; i++){
+            indexedGapWheel[i] =  (short)(indexedWheel[i]-indexedWheel[i-1]);
+        }
+        indexedGapWheel[0] = (short)(indexedWheelMod - indexedWheel[wheelArrayLength-1]);
+
+        System.out.println("indexed Gap Wheel mod " + wheelMod);
+        for(short indexGap: indexedGapWheel){
+            System.out.print(indexGap + " | ");
+        }
+        System.out.println();
+
+
+//        gotta remake 1 to not prime
+        oddIsPrime[0] = false;
+
+
+//        this is where serious optimizations can be made
+        short direction = 1;
+        for (int oddIndex = 2; 2 * oddIndex + 1 < (int) (Math.sqrt(num)) + 1; oddIndex++) {
+            if (oddIsPrime[oddIndex]) {
+                int actualPrime = (2*oddIndex)+1;
+                int composite = actualPrime^2;
+                int compositeIndex = 2*oddIndex * (oddIndex+1);
+                int counter = 0;
+                if (actualPrime%wheelMod==5){
+                    direction=(short)(wheelArrayLength-1);
+                }
+                for (short mod: wheelInUse){
+                    if((composite%wheelMod) != mod){
+                        counter++;
+                    } else{
+                        break;
+                    }
+                }
+                while(compositeIndex<oddIsPrime.length){
+                    oddIsPrime[compositeIndex] = false;
+                    int nextGap = indexedGapWheel[counter%wheelArrayLength];
+                    System.out.print("Turning " + compositeIndex + " to ");
+                    compositeIndex += actualPrime*nextGap;
+                    System.out.println(compositeIndex);
+                    counter+= direction;
                 }
             }
         }
 
-        boolOddArray[1] = true;
+//        this makes 2 not prime so that i can have all even gaps i think
+        oddIsPrime[1] = false;
         // if(number = prime)
         // put number in primeArray
         for (int oddIndex = 2; oddIndex < ((num + 1) / 2); oddIndex++) {
-            if (!boolOddArray[oddIndex]) {
+            if (oddIsPrime[oddIndex]) {
                 gapArray[startCount] = (short)((oddIndex - currentLargestPrimeIndex)*2);
                 currentLargestPrimeIndex = oddIndex;
                 startCount++;
