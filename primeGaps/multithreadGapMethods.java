@@ -17,11 +17,14 @@ public class multithreadGapMethods implements Runnable {
     int repetitions;
     long totalPrimes;
 
+    short[] gapWheelInUse;
+
+    int wheelModulus;
 
 
     public multithreadGapMethods(long startingNum, int addNum,
                                  short[] baseGapArray, int newGapArrayLength, int threadNumber,
-                                 int numOfThreads, long totalIntervalNum) {
+                                 int numOfThreads, long totalIntervalNum, short[] gapWheelInUse, int wheelModulus) {
         start = startingNum;
         add = addNum;
         listLengthOfGapInterval = newGapArrayLength;
@@ -30,6 +33,8 @@ public class multithreadGapMethods implements Runnable {
         numThreads = numOfThreads;
         totalInterval = totalIntervalNum;
         repetitions = (int) (totalInterval/add);
+        this.gapWheelInUse = gapWheelInUse;
+        this.wheelModulus = wheelModulus;
 
         multiSieve = new sieveGapMethods(gapArray);
     }
@@ -60,7 +65,7 @@ public class multithreadGapMethods implements Runnable {
             {
                 //creates new array of primes
                 short[] gapInterval = multiSieve.sieveFindInterval(start + ((long) add * (j-1)), add, gapArray,
-                        listLengthOfGapInterval);
+                        listLengthOfGapInterval, gapWheelInUse, wheelModulus);
 
                 int numPrimes = multiSieve.getIntervalCount();
                 //put primes in .csv file

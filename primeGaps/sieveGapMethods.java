@@ -44,28 +44,34 @@ public class sieveGapMethods {
 
 
     // returns a prime list from 0 to startingNum
-    public short[] createGapArray(int numOfGaps) {
+    public short[] createGapArray(int numOfGaps, short[] gapWheelInUse, int wheelModulus) {
         startCount = 1;
         int currentLargestPrimeIndex = 1;
         short[] gapArray = new short[(numOfGaps)];
+        int wheelArrayLength = gapWheelInUse.length;
 
-        short[] wheelMod6 = makeWheel();
-        short[] wheelMod30 = biggerWheel(wheelMod6, 6);
-        short[] wheelMod210 = biggerWheel(wheelMod30, 30);
-        short[] wheelMod2310 = biggerWheel(wheelMod210, 210);
-        int[] wheelMod30030 = biggerIntWheel(wheelMod2310, 2310);
-        int[] wheelMod510510 = biggerIntWheel(wheelMod30030, 30030);
-//        int[] wheelMod9699690 = biggerIntWheel(wheelMod510510, 510510);
+/*
+        smallestPrimeToCheck only exists so that the sieve of Eratosthenes doesnt
+        look at primes that have already 100% been knocked out by the wheel
+*/
+        short[] smallGapArray = new short[]{1, 2, 2, 4, 2, 4, 2, 4, 6, 2};
+        int smallestPrimeIndexToCheck = 1;
+        for(int i = 1; i<16; i++){
+            if( ((wheelModulus%((2*i)+1))==0) && isPrime(((2*i)+1), smallGapArray) ){
+                smallestPrimeIndexToCheck=i;
+            }
+        }
+        smallestPrimeIndexToCheck++;
 
-//        finally no longer efficient lol
-//        int[] wheelMod223092870 = biggerIntWheel(wheelMod9699690, 9699690);
+/*
+        oddIsPrime = boolean list for all odd numbers
+        if index = n, actual number = 2n+1
+        oddIsPrime is initialized to all false because we initially that all odd numbers are not prime
+        and then we used the wheel factorization to find possible primes
 
-        int[] wheelInUse = wheelMod510510;
-        int wheelMod = 510510;
-        int wheelArrayLength = wheelInUse.length;
-        // boolean list for all odd numbers
-        // if index = n, actual number = 2n+1
-        boolean[] oddIsPrime = new boolean[(num + 1) / 2];
+ */
+        int boolLength = (num + 1) / 2;
+        boolean[] oddIsPrime = new boolean[boolLength];
 //        these guys are here because the wheel does not count all the primes inside of it as primes
 //        this is my jank solution for now
         oddIsPrime[2] = true;
@@ -74,183 +80,307 @@ public class sieveGapMethods {
         oddIsPrime[6] = true;
         oddIsPrime[8] = true;
         oddIsPrime[9] = true;
+        oddIsPrime[11] = true;
+        oddIsPrime[14] = true;
 
         gapArray[0] = 1;
 
-//         bool[0] is true because 1 is not prime
-//
-//         starting with prime = 3
-//
-//         if (number = prime){
-//         all multiples of number are now not prime
-//         }
-//         repeat for all odd ints below sqrt(n)
 
 
-//        turns wheel mod 6 into the odd indexes to use less space
-        int[] indexedWheel = new int[wheelArrayLength];
-        int something = 0;
-        for(int num: wheelInUse){
-            indexedWheel[something] = (num-1)/2;
-            something++;
+/*
+        This here block of code basically rolls the wheel
+        it finds every number n such that n%wheelMod is part of the factor wheel
+        meaning that it can be prime
+        and then it switches that number from false to true
+        it will label some composite numbers as true
+ */
+        int probablePrime = gapWheelInUse[0]*-1;
+        boolean done = false;
+        int safetyNet = boolLength-wheelModulus;
+//        first while loop gets like 99% of numbers in the interval without spending too much computation time checking
+        while(probablePrime < safetyNet){
+            for (short gapBetweenPrimes : gapWheelInUse) {
+                probablePrime += gapBetweenPrimes;
+                oddIsPrime[probablePrime] = true;
+            }
         }
 
-//        System.out.println("indexed wheel mod " + wheelMod);
-//        for (short p: indexedWheel){
-//            System.out.print(p + " | ");
-//        }
-//        System.out.println();
-//        first lets see if i can roll a wheel and if that makes a difference
-//        oh shit the wheel turns things to potential primes, not primes to composites
-//        i gotta switch the booleans on everything
-        int wheelRoll = 0;
-        int indexedWheelMod = wheelMod/2;
-//        wheel displacement will be needed for segmented sieve
-//        when I start at like 1mil or whatever, 1mil%30 isnt 0 so I'll need to do some stuff
-        int wheelDisplacement = 0;
-
-//        this rolls the wheel along our thing from 0 to 1mil
-        boolean done = false;
-        while(!done){
-            for (int primeIndex: indexedWheel){
-                if ((primeIndex+(indexedWheelMod*wheelRoll))>= oddIsPrime.length){
+//        second while loop checks if the prime is bigger than the interval more often
+        while(!done) {
+            for (short gapBetweenPrimes : gapWheelInUse){
+                    probablePrime += gapBetweenPrimes;
+                if ((probablePrime) >= boolLength) {
                     done = true;
                     break;
                 }
-                oddIsPrime[primeIndex+(indexedWheelMod*wheelRoll)]=true;
+                oddIsPrime[probablePrime] = true;
             }
-            wheelRoll++;
         }
-
-
-
-//        create wheel gap thingy
-        short[] indexedGapWheel = new short[wheelArrayLength];
-        for(int i = 1; i<indexedGapWheel.length; i++){
-            indexedGapWheel[i] =  (short)(indexedWheel[i]-indexedWheel[i-1]);
-        }
-        indexedGapWheel[0] = (short)(indexedWheelMod - indexedWheel[wheelArrayLength-1]);
-
-//        System.out.println("indexed Gap Wheel mod " + wheelMod);
-//        for(short indexGap: indexedGapWheel){
-//            System.out.print(indexGap + " | ");
-//        }
-//        System.out.println();
-
 
 //        gotta remake 1 to not prime
         oddIsPrime[0] = false;
 
-
-//        this is where serious optimizations can be made
-        short direction = 1;
-        for (int oddIndex = 3; 2 * oddIndex + 1 < (int) (Math.sqrt(num)) + 1; oddIndex++) {
-            if (oddIsPrime[oddIndex]) {
-                int actualPrime = (2*oddIndex)+1;
-                int compositeIndex = 2*oddIndex * (oddIndex+1);
-                int counter = 0;
-                for (int i = 0; i<wheelArrayLength; i++){
-                    if((actualPrime%wheelMod)==wheelInUse[i]){
-                        counter = i+1;
-                        break;
-                    }
+/*
+        sieve of Eratosthenes
+        it starts at the smallest prime not completely checked by the factor wheel
+        it finds every multiple of that prime that was labeled as prime by the factor wheel
+        it switches that boolean back to not prime
+ */
+        int biggestPrime = (int) (Math.sqrt(num)/2)+1;
+        for (int oddIndex = smallestPrimeIndexToCheck; oddIndex < biggestPrime; oddIndex++) {
+            if (!oddIsPrime[oddIndex]) {
+                continue;
+            }
+            int actualPrime = (2*oddIndex)+1;
+            int compositeIndex = 2*oddIndex * (oddIndex+1);
+            int counter = 0;
+            int indexModChecker = gapWheelInUse[0]*-1;
+            for (int i = 0; i<wheelArrayLength; i++){
+                indexModChecker+=gapWheelInUse[i];
+                if((actualPrime%wheelModulus)== ((indexModChecker*2)+1)){
+                    counter = i+1;
+                    break;
                 }
+            }
 
-                while(compositeIndex<oddIsPrime.length){
-                    oddIsPrime[compositeIndex] = false;
-                    int nextGap = indexedGapWheel[counter%wheelArrayLength];
-//                    System.out.print("Turning " + compositeIndex + " to ");
-                    compositeIndex += actualPrime*nextGap;
-//                    System.out.println(compositeIndex);
-                    counter++;
-                }
+            while(compositeIndex<boolLength){
+                oddIsPrime[compositeIndex] = false;
+                int nextGap = gapWheelInUse[counter%wheelArrayLength];
+                compositeIndex += actualPrime*nextGap;
+                counter++;
             }
         }
 
-//        this makes 2 not prime so that i can have all even gaps i think
-//        oddIsPrime[1] = false;
 
-        // if(number = prime)
-        // put number in primeArray
-        for (int oddIndex = 2; oddIndex < ((num + 1) / 2); oddIndex++) {
+/*
+        if(number == prime)
+        put number in primeArray
+        it starts on oddIndex=2 because when I say that gapArray[0]=1,
+        im already saying that 2 and 3 are prime, so i start at 5
+*/
+
+        for (int oddIndex = 2; oddIndex < boolLength; oddIndex++) {
             if (oddIsPrime[oddIndex]) {
                 gapArray[startCount] = (short)((oddIndex - currentLargestPrimeIndex)*2);
                 currentLargestPrimeIndex = oddIndex;
                 startCount++;
-//                totalCount++;
             }
         }
 
-        // print prime list
-        /*
-         * for(int n =0; n<count; n++)
-         * {
-         * System.out.println(primeArray[n]);
-         * }
-         *
-         */
         return Arrays.copyOf(gapArray, startCount);
     }
 
+
+
     // returns an array of primes in between start and start+add
-    // be warned the array is too big so the last multiple entries are going to be 0
-    //use sieve.getIntervalCount to find the true amount of primes so that you dont print 0's
-    public short[] sieveFindInterval(long start, int add, short[] gapArray, int numOfNewGaps) {
+    public short[] sieveFindInterval(long start, int add, short[] gapArray,
+                                     int numOfNewGaps, short[] gapWheelInUse, int wheelModulus) {
+        if (start == 0){
+            sieveGapMethods firstThing = new sieveGapMethods(add);
+            short[] result = firstThing.createGapArray(numOfNewGaps, gapWheelInUse, wheelModulus);
+            totalCount += firstThing.getStartCount();
+            intervalCount = firstThing.getStartCount();
+            return result;
+        }
+
         long prime = 2;
         long multiple;
         short[] gapIntervalArray = new short[(numOfNewGaps)];
-        boolean startIsZero = false;
-        boolean[] boolAddArray = new boolean[(int) ((add + 1) / 2)];
+        boolean[] oddIsPrimeInterval = new boolean[(int) ((add + 1) / 2)];
         long basePrime = findBasePrime(start, gapArray);
-        int baseIndex;
+//          long basePrime = start-3;
+        int baseIndex = (int)((basePrime - start-1)/2);
         int biggestNeededPrime = (int) Math.sqrt(start + add) + 1;
-
-        if (start == 0){
-            startIsZero = true;
-            boolAddArray[0] = true;
-            boolAddArray[1] = true;
-            gapIntervalArray[0] = 1;
-            intervalCount = 1;
-            totalCount++;
-            baseIndex = 1;
-        } else {
-            baseIndex = (int)((basePrime - start-1)/2);
-            intervalCount = 0;
+        int boolLength = oddIsPrimeInterval.length;
+        int wheelArrayLength = gapWheelInUse.length;
+        intervalCount = 0;
+/*
+        smallestPrimeToCheck only exists so that the sieve of Eratosthenes doesnt
+        look at primes that have already 100% been knocked out by the wheel
+*/
+        short[] smallGapArray = new short[]{1, 2, 2, 4, 2, 4, 2, 4, 6, 2};
+        int smallestPrimeIndexToCheck = 1;
+        for(int i = 1; i<35; i+=2){
+            if(((wheelModulus%i)==0) && isPrime(i, smallGapArray)){
+                smallestPrimeIndexToCheck=i;
+            }
         }
+        smallestPrimeIndexToCheck++;
 
-        for (short gap : gapArray)
-        {
-            prime += gap;
-            if (prime > biggestNeededPrime) {
+/*
+        how to roll the gosh darn wheel over an interval
+        okay the wheel works im pretty sure
+ */
+        int whereTheFirstNumIsOnTheWheel = (int)(start%wheelModulus);
+//        System.out.println("(start%wheelModulus) = " + whereTheFirstNumIsOnTheWheel);
+        int actualWheelNum = -1;
+        int firstGapIndex = 1;
+
+        for(short gap: gapWheelInUse){
+            actualWheelNum += 2*gap;
+            if (actualWheelNum > whereTheFirstNumIsOnTheWheel){
                 break;
             }
+            firstGapIndex++;
+        }
+
+//        int wheelCount = 0;
+//        System.out.println("start mod(wheelMod) = " + whereTheFirstNumIsOnTheWheel);
+//        System.out.println("firstGapIndex = " + firstGapIndex);
+//        System.out.println("actualWheelNum = " + actualWheelNum);
+
+        int indexDistanceBetweenStartAndFirstWheelNum = (actualWheelNum - whereTheFirstNumIsOnTheWheel-1)/2;
+        int probablePrime = indexDistanceBetweenStartAndFirstWheelNum;
+//        System.out.println("probable Prime = " + probablePrime);
+
+/*
+        This rolls the wheel once starting at some point and rolling to a wheel position of 0
+ */
+        for(int gapIndex = firstGapIndex; gapIndex < wheelArrayLength; gapIndex++){
+            oddIsPrimeInterval[probablePrime] = true;
+            probablePrime += gapWheelInUse[gapIndex];
+        }
+        oddIsPrimeInterval[probablePrime] = true;
+
+/*
+        This rolls the wheel without any costly if statements and gets us like 90% of the way there
+ */
+        int safetyNet = boolLength - wheelModulus;
+        while(probablePrime < safetyNet){
+            for(short gap: gapWheelInUse){
+                probablePrime += gap;
+                oddIsPrimeInterval[probablePrime] = true;
+//                wheelCount++;
+            }
+        }
+
+/*
+        This rolls the wheel to the very end of the list
+ */
+        boolean done = false;
+        while(!done) {
+            for (short gapBetweenPrimes : gapWheelInUse){
+                probablePrime += gapBetweenPrimes;
+                if ((probablePrime) >= boolLength) {
+                    done = true;
+                    break;
+                }
+                oddIsPrimeInterval[probablePrime] = true;
+            }
+        }
 
 
-            if (startIsZero){
-                multiple = prime*prime;
-            } else{
-                multiple = (start - ((start) % prime)) + prime;
-                if (multiple % 2 == 0) {
-                    multiple += prime;
+//        System.out.println("wheelCount = " + wheelCount);
+/*
+        Sieve of Eratosthenes
+        Takes the multiples of all the primes and labels them as not prime
+
+        int biggestPrime = (int) (Math.sqrt(num)/2)+1;
+        for (int oddIndex = smallestPrimeIndexToCheck; oddIndex < biggestPrime; oddIndex++) {
+            if (!oddIsPrime[oddIndex]) {
+                continue;
+            }
+            int actualPrime = (2*oddIndex)+1;
+            int compositeIndex = 2*oddIndex * (oddIndex+1);
+            int counter = 0;
+            int indexModChecker = gapWheelInUse[0]*-1;
+            for (int i = 0; i<wheelArrayLength; i++){
+                indexModChecker+=gapWheelInUse[i];
+                if((actualPrime%wheelModulus)== ((indexModChecker*2)+1)){
+                    counter = i+1;
+                    break;
                 }
             }
 
+            while(compositeIndex<boolLength){
+                oddIsPrime[compositeIndex] = false;
+                int nextGap = gapWheelInUse[counter%wheelArrayLength];
+                compositeIndex += actualPrime*nextGap;
+                counter++;
+            }
+        }
+ */
+/*
+        for (short gap : gapArray)
+        {
+            prime += gap;
+            if(prime < smallestPrimeIndexToCheck){
+                continue;
+            }
+            if (prime > biggestNeededPrime) {
+                break;
+            }
+            multiple = (start - ((start) % prime)) + prime;
+            if (multiple % 2 == 0) {
+                multiple += prime;
+            }
+
             for (long composite = multiple; composite < start + add; composite += 2 * prime) {
-                boolAddArray[(int) (composite - start - 1) / 2] = true;
+                oddIsPrimeInterval[(int) (composite - start - 1) / 2] = false;
+            }
+        }
+*/
+
+
+/*
+        The thing that does work here right now is i will sometimes start on a number that the wheel has checked and
+        then everything's fucked
+        so I need to start on whatever number is a multiple of that prime and also labeled prime by the wheel
+ */
+        long actualPrime = 2;
+
+        for(short primeGap: gapArray){
+            actualPrime += primeGap;
+//            System.out.println("next prime = " + actualPrime);
+            if (actualPrime < smallestPrimeIndexToCheck){
+                continue;
+            }
+
+            if (actualPrime > biggestNeededPrime){
+                break;
+            }
+
+            multiple = (start - ((start) % actualPrime)) + actualPrime;
+            if (multiple % 2 == 0) {
+                multiple += actualPrime;
+            }
+
+            int compositeIndex = (int) ((multiple-start-1)/2);
+            int counter = 0;
+            int indexModChecker = -1;
+            int wheelCheckerThingy = (int) (multiple/actualPrime);
+            int modulusThingy= wheelCheckerThingy%wheelModulus;
+
+            for (int i = 0; i < wheelArrayLength; i++){
+            indexModChecker += 2*gapWheelInUse[i];
+                if( indexModChecker >= modulusThingy ){
+                    counter = i+1;
+                    break;
+                }
+            }
+
+            compositeIndex += actualPrime*(indexModChecker - modulusThingy)/2;
+
+            while(compositeIndex < boolLength){
+                oddIsPrimeInterval[compositeIndex] = false;
+                int nextGap = gapWheelInUse[counter % wheelArrayLength];
+                compositeIndex += actualPrime*nextGap;
+                counter++;
             }
         }
 
-
-
-
-        for (int oddIndex = 0; oddIndex < boolAddArray.length ; oddIndex++) {
-            if (!boolAddArray[oddIndex]) {
+/*
+        if(number == prime)
+        put number in primeArray
+*/
+        for (int oddIndex = 0; oddIndex < boolLength ; oddIndex++) {
+            if (oddIsPrimeInterval[oddIndex]) {
                 gapIntervalArray[intervalCount] = (short) ((oddIndex - baseIndex)*2);
                 baseIndex = oddIndex;
                 intervalCount++;
-                totalCount++;
             }
         }
+        totalCount += intervalCount;
 
 
         return Arrays.copyOf(gapIntervalArray, intervalCount);
@@ -297,5 +427,4 @@ public class sieveGapMethods {
 //        System.out.println(number + " is prime");
         return true;
     }
-
 }

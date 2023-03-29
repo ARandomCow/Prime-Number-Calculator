@@ -1,5 +1,7 @@
 package primeGaps;
 
+import static primeGaps.shortWheelFactoring.*;
+
 public class multithreadedPrimeGaps {
 
     public static void main(String[] args) {
@@ -18,8 +20,16 @@ public class multithreadedPrimeGaps {
 
         sieveGapMethods erat = new sieveGapMethods(primeMax);
 
+        short[] indexWheelMod6 = new short[]{0,2};
+        short[] indexWheelMod30 = biggerIndexWheel(indexWheelMod6, 6);
+        short[] indexWheelMod210 = biggerIndexWheel(indexWheelMod30, 30);
+        short[] indexWheelMod2310 = biggerIndexWheel(indexWheelMod210, 210);
+        short[] indexWheelMod30030 = biggerIndexWheel(indexWheelMod2310, 2310);
+        int[] indexWheelMod510510 = biggerIndexWheelInt(indexWheelMod30030, 30030);
+        int[] indexWheelMod9699690 = biggerIndexWheelInt(indexWheelMod510510, 510510);
+        short[] gapWheelMod223092870 = biggerIndexGapWheel(indexWheelMod9699690, 9699690);
 
-        short[] primeArray = erat.createGapArray(numOfPrimes);
+        short[] primeArray = erat.createGapArray(numOfPrimes, gapWheelMod223092870, 223092870);
 
         System.out.println("Base prime array counted");
 
@@ -39,16 +49,18 @@ public class multithreadedPrimeGaps {
         long startDifference = 1_000_000_000L;
 
         multithreadGapMethods threadi = new multithreadGapMethods(start, 1, primeArray,
-                newPrimeLength, 1, numOfThreads, startDifference);
+                newPrimeLength, 1, numOfThreads, startDifference, gapWheelMod223092870,
+                223092870);
         Thread t1 = new Thread(threadi);
 
         int totalThreadsRun = 0;
-        while (totalThreadsRun <= 0) {
+        while (totalThreadsRun <= -1) {
             long intervalStartTime = System.currentTimeMillis();
 
             for (int threadNum = totalThreadsRun; threadNum < numOfThreads+totalThreadsRun; threadNum++) {
                 threadi = new multithreadGapMethods(start + (startDifference * threadNum),
-                        add, primeArray, newPrimeLength, threadNum, numOfThreads, startDifference);
+                        add, primeArray, newPrimeLength, threadNum, numOfThreads, startDifference,
+                        gapWheelMod223092870, 223092870);
                 t1 = new Thread(threadi);
                 t1.start();
             }

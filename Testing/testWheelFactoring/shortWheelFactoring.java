@@ -227,7 +227,7 @@ public class shortWheelFactoring {
 		return bigWheel;
 	}
 
-	public static short[] biggerIndexWheel(short[] wheel, int totalWheelSize){
+	public static short[] biggerIndexWheel(short[] smallIndexWheel, int totalWheelSize){
 		int wheelSize = totalWheelSize/2;
 //        for(boolean isPrime: wheel){
 //            System.out.print(isPrime + " ");
@@ -237,23 +237,107 @@ public class shortWheelFactoring {
 //        should get   false, true, false, false, false, true
 
 //        find largest num after 1
-		int wheelScaling = (wheel[1]*2)+1;
+		int wheelScaling = (smallIndexWheel[1]*2)+1;
 //        roll small wheel around big wheel
-		int bigWheelSize = (wheel.length*wheelScaling) - wheel.length;
+		int bigWheelSize = (smallIndexWheel.length*wheelScaling) - smallIndexWheel.length;
 
 //		rolling the wheel
 		int index = 0;
 		short[] bigWheel = new short[bigWheelSize];
 		for (int num = 0; num < wheelScaling; num++) {
-			int rollNum = wheelSize*num;
-			for (short prime : wheel) {
-				short primeIndex = (short)(prime + rollNum);
-				if( ((primeIndex*2)+1) % wheelScaling != 0 ){
-					bigWheel[index] = (short) primeIndex;
+			for (short prime : smallIndexWheel) {
+				int actualPrime = ((prime + (wheelSize * num))*2)+1;
+				if( (actualPrime%wheelScaling) != 0 ){
+					bigWheel[index] = (short) (prime + (wheelSize * num));
 					index++;
 				}
 			}
 		}
+
+
+		return bigWheel;
+	}
+
+
+	public static short[] biggerIndexGapWheel(short[] wheel, int totalWheelSize){
+		int wheelSize = totalWheelSize/2;
+		int wheelScaling = (wheel[1]*2)+1;
+		int bigWheelSize = (wheel.length*wheelScaling) - wheel.length;
+		int gapSetter = 0;
+
+//		rolling the wheel
+		int index = 0;
+		int num = 0;
+		short[] bigWheel = new short[bigWheelSize];
+		while(num<wheelScaling) {
+			for (short prime : wheel) {
+				if( ((((prime + (wheelSize * num))*2)+1)%wheelScaling != 0) ){
+					bigWheel[index] = (short) (prime + (wheelSize * num) - gapSetter);
+					gapSetter = prime + (wheelSize * num);
+					index++;
+				}
+			}
+			num++;
+		}
+			num--;
+		bigWheel[0] = (short)((wheelSize*wheelScaling) - (wheel[wheel.length-1] + (wheelSize * num)));
+
+
+		return bigWheel;
+	}
+
+
+
+	public static int[] biggerIndexGapWheelInt(int[] wheel, int totalWheelSize){
+		int wheelSize = totalWheelSize/2;
+		int wheelScaling = (wheel[1]*2)+1;
+		int bigWheelSize = (wheel.length*wheelScaling) - wheel.length;
+		int gapSetter = 0;
+
+//		rolling the wheel
+		int index = 0;
+		int num = 0;
+		int[] bigWheel = new int[bigWheelSize];
+		while(num<wheelScaling) {
+			for (int prime : wheel) {
+				if( ((((prime + (wheelSize * num))*2)+1)%wheelScaling != 0) ){
+					bigWheel[index] = (prime + (wheelSize * num) - gapSetter);
+					gapSetter = prime + (wheelSize * num);
+					index++;
+				}
+			}
+			num++;
+		}
+		num--;
+		bigWheel[0] = ((wheelSize*wheelScaling) - (wheel[wheel.length-1] + (wheelSize * num)));
+
+
+		return bigWheel;
+	}
+
+
+	public static int[] biggerIndexGapWheelInt(short[] wheel, int totalWheelSize){
+		int wheelSize = totalWheelSize/2;
+		int wheelScaling = (wheel[1]*2)+1;
+		int bigWheelSize = (wheel.length*wheelScaling) - wheel.length;
+		int gapSetter = 0;
+
+//		rolling the wheel
+		int index = 0;
+		int num = 0;
+		int[] bigWheel = new int[bigWheelSize];
+		while(num<wheelScaling) {
+			for (short prime : wheel) {
+				if( ((((prime + (wheelSize * num))*2)+1)%wheelScaling != 0) ){
+					bigWheel[index] = (prime + (wheelSize * num) - gapSetter);
+					gapSetter = prime + (wheelSize * num);
+					index++;
+				}
+			}
+			num++;
+		}
+		num--;
+		bigWheel[0] = ((wheelSize*wheelScaling) - (wheel[wheel.length-1] + (wheelSize * num)));
 
 
 		return bigWheel;
@@ -278,11 +362,9 @@ public class shortWheelFactoring {
 		int index = 0;
 		int[] bigWheel = new int[bigWheelSize];
 		for (int num = 0; num < wheelScaling; num++) {
-			int rollNum = wheelSize*num;
 			for (short prime : wheel) {
-				int primeIndex = prime + rollNum;
-				if( (((primeIndex*2)+1) % wheelScaling) != 0 ){
-					bigWheel[index] = primeIndex;
+				if( ((((prime + (wheelSize * num))*2)+1)%wheelScaling != 0) ){
+					bigWheel[index] = (prime + (wheelSize * num));
 					index++;
 				}
 			}
@@ -291,7 +373,6 @@ public class shortWheelFactoring {
 
 		return bigWheel;
 	}
-
 
 
 
@@ -313,11 +394,9 @@ public class shortWheelFactoring {
 		int index = 0;
 		int[] bigWheel = new int[bigWheelSize];
 		for (int num = 0; num < wheelScaling; num++) {
-			int rollNum = wheelSize*num;
 			for (int prime : wheel) {
-				int primeIndex = prime + rollNum;
-				if( (((primeIndex*2)+1) % wheelScaling) != 0 ){
-					bigWheel[index] = primeIndex;
+				if( ((((prime + (wheelSize * num))*2)+1)%wheelScaling != 0) ){
+					bigWheel[index] = (prime + (wheelSize * num));
 					index++;
 				}
 			}
@@ -326,69 +405,5 @@ public class shortWheelFactoring {
 
 		return bigWheel;
 	}
-
-
-	public static short[] biggerIndexGapWheel(short[] wheel, int totalWheelSize){
-		int wheelSize = totalWheelSize/2;
-		int wheelScaling = (wheel[1]*2)+1;
-		int bigWheelSize = (wheel.length*wheelScaling) - wheel.length;
-		int gapSetter = 0;
-
-//		rolling the wheel
-		int index = 0;
-		int num = 0;
-		short[] bigWheel = new short[bigWheelSize];
-		while(num<wheelScaling) {
-			int rollNum = wheelSize*num;
-			for (short prime : wheel) {
-				int newPrimeIndex = prime + rollNum;
-				if( ((newPrimeIndex*2)+1)%wheelScaling != 0 ){
-					bigWheel[index] = (short)(newPrimeIndex - gapSetter);
-					gapSetter = newPrimeIndex;
-					index++;
-				}
-			}
-			num++;
-		}
-			num--;
-		bigWheel[0] = (short)((wheelSize*wheelScaling) - (wheel[wheel.length-1] + (wheelSize * num)));
-
-
-		return bigWheel;
-	}
-
-
-
-	public static short[] biggerIndexGapWheel(int[] wheel, int totalWheelSize){
-		int wheelSize = totalWheelSize/2;
-		int wheelScaling = (wheel[1]*2)+1;
-		int bigWheelSize = (wheel.length*wheelScaling) - wheel.length;
-		int gapSetter = 0;
-
-//		rolling the wheel
-		int index = 0;
-		int num = 0;
-		short[] bigWheel = new short[bigWheelSize];
-		while(num<wheelScaling) {
-			int rollNum = wheelSize*num;
-			for (int prime : wheel) {
-				int newPrimeIndex = prime + rollNum;
-				if( ((newPrimeIndex*2)+1)%wheelScaling != 0 ){
-					bigWheel[index] = (short)(newPrimeIndex - gapSetter);
-					gapSetter = newPrimeIndex;
-					index++;
-				}
-			}
-			num++;
-		}
-		num--;
-		bigWheel[0] = (short)((wheelSize*wheelScaling) - (wheel[wheel.length-1] + (wheelSize * num)));
-
-
-		return bigWheel;
-	}
-
-
-
 }
 
