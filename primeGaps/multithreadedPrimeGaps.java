@@ -1,5 +1,7 @@
 package primeGaps;
 
+import primeGaps.*;
+
 public class multithreadedPrimeGaps {
 
     public static void main(String[] args) {
@@ -16,12 +18,14 @@ public class multithreadedPrimeGaps {
         // if primeMax = 1,000,000,000 then numOfPrimes = 50,847,533
         // --------------------------------------------------------------------------------------------------
 
-        sieveGapMethods erat = new sieveGapMethods(primeMax);
+        sieveGapMethods erat = new sieveGapMethods(primeMax); 
 
 
         short[] primeArray = erat.createGapArray(numOfPrimes);
 
         System.out.println("Base prime array counted");
+
+        System.out.println("Testing");
 
 //        int prime =2;
 //        for (short gap: primeArray){
@@ -35,7 +39,7 @@ public class multithreadedPrimeGaps {
         long start = 0;
         int add = 1_000_000;
         int newPrimeLength = 100_000;
-        int numOfThreads = 5;
+        int numOfThreads = 1;
         long startDifference = 10_000_000_000L;
 
         multithreadGapMethods threadi = new multithreadGapMethods(start, 1, primeArray,
