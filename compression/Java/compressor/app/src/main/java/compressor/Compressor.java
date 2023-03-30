@@ -10,7 +10,7 @@ public class Compressor {
 
     }
 
-    public void compressDataLZ4(byte[] data, boolean debug) {
+    public byte[] compressDataLZ4(byte[] data, boolean debug) {
         
       // Compressor Object 
       LZ4Factory factory = LZ4Factory.nativeInstance();
@@ -43,18 +43,20 @@ public class Compressor {
         System.out.println("Compression Time: " + duration + " ms");
       }
 
+      return compressed;
+
     }
 
 
-    public void decompressDataLZ4(byte[] data, boolean debug) {
+    public byte[] decompressDataLZ4(byte[] data, boolean debug, int originalLength) {
       
       // Compressor Object 
       LZ4Factory factory = LZ4Factory.fastestInstance();
 
-      final int compressedLength = data.length; 
+      //final int compressedLength = data.length; 
 
       if (debug) {
-        System.out.println("Compressed Length: " + compressedLength);
+        System.out.println("Compressed Length: " + originalLength);
 
       }
 
@@ -62,9 +64,12 @@ public class Compressor {
       long startTime = System.currentTimeMillis();
 
       // Decompress Data 
+      //LZ4SafeDecompressor decompressor = factory.safeDecompressor();
+      //byte[] restored = new byte[originalLength];
+      //int compressedLength2 = decompressor.decompress(data, 0, originalLength, restored, 0);
       LZ4FastDecompressor decompressor = factory.fastDecompressor();
-      byte[] restored = new byte[compressedLength];
-      int compressedLength2 = decompressor.decompress(data, 0, restored, 0, compressedLength);
+      byte[] restored = new byte[originalLength];
+      int compressedLength2 = decompressor.decompress(data, 0, restored, 0, originalLength);
 
       // Stop Stopwatch 
       long endTime = System.currentTimeMillis();
@@ -77,6 +82,8 @@ public class Compressor {
         System.out.println("Decompression Time: " + duration + " ms");
 
       } 
+
+      return restored;
 
     }
 

@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import compressor.Compressor; 
+import compressor.Tools; 
 
 public class App {
 
@@ -18,14 +19,23 @@ public class App {
     public static void main(String[] args) {
       
       //byte[] data = "abcdefghijklmnopqrstuvwxyz".getBytes("UTF-8"); 
-      byte[] data = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".getBytes();
+      byte[] data = "Compression Test. 43. #. &.YOUR MOM".getBytes();
+      
       lz4DataTest(data);
     }
 
     public static void lz4DataTest(byte[] data) {
         
         // Compress Data
-        compressor.compressDataLZ4(data, true);
+        System.out.println("Compressing Data...");
+        byte[] compressed = compressor.compressDataLZ4(data, true);
+
+        // Decompress Data
+        System.out.println("\nDecompressing Data...");
+        byte[] decompressed = compressor.decompressDataLZ4(compressed, true, data.length);
+
+        // Check Decompress Inegrity
+        Tools.compareByteArrays(compressed, decompressed); 
     }
 
     public static void snappyFileTest() {
