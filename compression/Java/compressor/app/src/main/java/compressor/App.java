@@ -16,6 +16,20 @@ public class App {
     static Compressor compressor = new Compressor(); 
 
     public static void main(String[] args) {
+      
+      //byte[] data = "abcdefghijklmnopqrstuvwxyz".getBytes("UTF-8"); 
+      byte[] data = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".getBytes();
+      lz4DataTest(data);
+    }
+
+    public static void lz4DataTest(byte[] data) {
+        
+        // Compress Data
+        compressor.compressDataLZ4(data, true);
+    }
+
+    public static void snappyFileTest() {
+
         String inputFileName = "/home/winston/Documents/GitHub/Prime-Calculator/compression/Java/compressor/app/src/main/java/compressor/test.txt"; 
         String outputFileName = "/home/winston/Documents/GitHub/Prime-Calculator/compression/Java/compressor/app/src/main/java/compressor/compressed.txt";
         String decompressOutputName = "/home/winston/Documents/GitHub/Prime-Calculator/compression/Java/compressor/app/src/main/java/compressor/decompressed.txt";

@@ -2,10 +2,81 @@ package compressor;
 
 import java.io.*;
 import org.xerial.snappy.*;
+import net.jpountz.lz4.*; 
 
 public class Compressor {
     
     public Compressor() {
+
+    }
+
+    public void compressDataLZ4(byte[] data, boolean debug) {
+        
+      // Compressor Object 
+      LZ4Factory factory = LZ4Factory.nativeInstance();
+
+      final int decompressedLength = data.length;
+
+      if (debug) {
+        System.out.println("\nDecompressed Length: " + decompressedLength);
+
+      }
+
+      // Start Stopwatch  
+      long startTime = System.currentTimeMillis();
+
+
+      // Compress Data
+      LZ4Compressor compressor = factory.highCompressor(17); 
+      int maxCompressedLength = compressor.maxCompressedLength(decompressedLength);
+      byte[] compressed = new byte[maxCompressedLength];
+      int compressedLength = compressor.compress(data, 0, decompressedLength, compressed, 0, maxCompressedLength);
+
+      // Stop Stopwatch 
+      long endTime = System.currentTimeMillis();
+
+      if (debug) {
+        System.out.println("Compressed Length: " + compressedLength);
+        
+        long duration = endTime - startTime;
+
+        System.out.println("Compression Time: " + duration + " ms");
+      }
+
+    }
+
+
+    public void decompressDataLZ4(byte[] data, boolean debug) {
+      
+      // Compressor Object 
+      LZ4Factory factory = LZ4Factory.fastestInstance();
+
+      final int compressedLength = data.length; 
+
+      if (debug) {
+        System.out.println("Compressed Length: " + compressedLength);
+
+      }
+
+      // Start Stopwatch 
+      long startTime = System.currentTimeMillis();
+
+      // Decompress Data 
+      LZ4FastDecompressor decompressor = factory.fastDecompressor();
+      byte[] restored = new byte[compressedLength];
+      int compressedLength2 = decompressor.decompress(data, 0, restored, 0, compressedLength);
+
+      // Stop Stopwatch 
+      long endTime = System.currentTimeMillis();
+
+      if (debug) {
+        System.out.println("Decompressed Length: " + compressedLength2);
+
+        long duration = endTime - startTime;
+
+        System.out.println("Decompression Time: " + duration + " ms");
+
+      } 
 
     }
 
