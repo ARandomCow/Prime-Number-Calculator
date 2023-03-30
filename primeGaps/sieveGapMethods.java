@@ -29,7 +29,6 @@ public class sieveGapMethods {
         totalCount = 0;
     }
 
-    // returns the amount of calculated primes. . .theoretically at least
     public int getStartCount() {
         return startCount;
     }
@@ -44,18 +43,19 @@ public class sieveGapMethods {
 
 
     // returns a prime list from 0 to startingNum
-    public short[] createGapArray(int numOfGaps, short[] gapWheelInUse, int wheelModulus) {
+    public short[] createGapArray(int numOfGaps, short[] gapWheelInUse, long wheelModulus) {
         startCount = 1;
         int currentLargestPrimeIndex = 1;
         short[] gapArray = new short[(numOfGaps)];
         int wheelArrayLength = gapWheelInUse.length;
+        long timeCalculating = 0;
 
 /*
         smallestPrimeToCheck only exists so that the sieve of Eratosthenes doesnt
         look at primes that have already 100% been knocked out by the wheel
 */
         short[] smallGapArray = new short[]{1, 2, 2, 4, 2, 4, 2, 4, 6, 2};
-        int smallestPrimeIndexToCheck = 1;
+        int smallestPrimeIndexToCheck = 14;
         for(int i = 1; i<16; i++){
             if( ((wheelModulus%((2*i)+1))==0) && isPrime(((2*i)+1), smallGapArray) ){
                 smallestPrimeIndexToCheck=i;
@@ -95,8 +95,8 @@ public class sieveGapMethods {
         it will label some composite numbers as true
  */
         int probablePrime = gapWheelInUse[0]*-1;
-        boolean done = false;
-        int safetyNet = boolLength-wheelModulus;
+        long safetyNet = boolLength-(wheelModulus/2);
+
 //        first while loop gets like 99% of numbers in the interval without spending too much computation time checking
         while(probablePrime < safetyNet){
             for (short gapBetweenPrimes : gapWheelInUse) {
@@ -105,20 +105,19 @@ public class sieveGapMethods {
             }
         }
 
-//        second while loop checks if the prime is bigger than the interval more often
-        while(!done) {
-            for (short gapBetweenPrimes : gapWheelInUse){
-                    probablePrime += gapBetweenPrimes;
-                if ((probablePrime) >= boolLength) {
-                    done = true;
-                    break;
-                }
-                oddIsPrime[probablePrime] = true;
+//        second loop checks if the prime is bigger than the interval more often
+        for (short gapBetweenPrimes : gapWheelInUse){
+                probablePrime += gapBetweenPrimes;
+            if ((probablePrime) >= boolLength) {
+                break;
             }
+            oddIsPrime[probablePrime] = true;
         }
 
 //        gotta remake 1 to not prime
         oddIsPrime[0] = false;
+
+
 
 /*
         sieve of Eratosthenes
@@ -126,6 +125,7 @@ public class sieveGapMethods {
         it finds every multiple of that prime that was labeled as prime by the factor wheel
         it switches that boolean back to not prime
  */
+
         int biggestPrime = (int) (Math.sqrt(num)/2)+1;
         for (int oddIndex = smallestPrimeIndexToCheck; oddIndex < biggestPrime; oddIndex++) {
             if (!oddIsPrime[oddIndex]) {
@@ -135,6 +135,7 @@ public class sieveGapMethods {
             int compositeIndex = 2*oddIndex * (oddIndex+1);
             int counter = 0;
             int indexModChecker = gapWheelInUse[0]*-1;
+
             for (int i = 0; i<wheelArrayLength; i++){
                 indexModChecker+=gapWheelInUse[i];
                 if((actualPrime%wheelModulus)== ((indexModChecker*2)+1)){
@@ -142,13 +143,39 @@ public class sieveGapMethods {
                     break;
                 }
             }
+            long sieveSafetyNet = boolLength - (actualPrime*wheelModulus);
 
-            while(compositeIndex<boolLength){
+//            long startTime = System.currentTimeMillis();
+
+            boolean completelyDone = false;
+            for(int i = counter; i < wheelArrayLength; i++){
+                if (compositeIndex >= boolLength){
+                    completelyDone = true;
+                    break;
+                }
                 oddIsPrime[compositeIndex] = false;
-                int nextGap = gapWheelInUse[counter%wheelArrayLength];
-                compositeIndex += actualPrime*nextGap;
-                counter++;
+                compositeIndex += actualPrime * gapWheelInUse[i];
             }
+
+            while(compositeIndex < sieveSafetyNet){
+                for(short gap: gapWheelInUse){
+                    oddIsPrime[compositeIndex] = false;
+                    compositeIndex += actualPrime*gap;
+                }
+            }
+
+            while (!completelyDone) {
+                for (short gap : gapWheelInUse) {
+                    if (compositeIndex >= boolLength) {
+                        completelyDone = true;
+                        break;
+                    }
+                    oddIsPrime[compositeIndex] = false;
+                    compositeIndex += (actualPrime * gap);
+                }
+            }
+//            long endTime = System.currentTimeMillis();
+//            timeCalculating += (endTime - startTime);
         }
 
 
@@ -167,6 +194,7 @@ public class sieveGapMethods {
             }
         }
 
+//        System.out.println("Time spent on that one block of code = " + timeCalculating);
         return Arrays.copyOf(gapArray, startCount);
     }
 
@@ -174,7 +202,7 @@ public class sieveGapMethods {
 
     // returns an array of primes in between start and start+add
     public short[] sieveFindInterval(long start, int add, short[] gapArray,
-                                     int numOfNewGaps, short[] gapWheelInUse, int wheelModulus) {
+                                     int numOfNewGaps, short[] gapWheelInUse, int wheelModulus){
         if (start == 0){
             sieveGapMethods firstThing = new sieveGapMethods(add);
             short[] result = firstThing.createGapArray(numOfNewGaps, gapWheelInUse, wheelModulus);
@@ -188,12 +216,12 @@ public class sieveGapMethods {
         short[] gapIntervalArray = new short[(numOfNewGaps)];
         boolean[] oddIsPrimeInterval = new boolean[(int) ((add + 1) / 2)];
         long basePrime = findBasePrime(start, gapArray);
-//          long basePrime = start-3;
         int baseIndex = (int)((basePrime - start-1)/2);
-        int biggestNeededPrime = (int) Math.sqrt(start + add) + 1;
+        long biggestNeededPrime = (long) Math.sqrt(start + add) + 1;
         int boolLength = oddIsPrimeInterval.length;
         int wheelArrayLength = gapWheelInUse.length;
         intervalCount = 0;
+        int calcTime = 0;
 /*
         smallestPrimeToCheck only exists so that the sieve of Eratosthenes doesnt
         look at primes that have already 100% been knocked out by the wheel
@@ -208,11 +236,14 @@ public class sieveGapMethods {
         smallestPrimeIndexToCheck++;
 
 /*
-        how to roll the gosh darn wheel over an interval
-        okay the wheel works im pretty sure
+        rolls the wheel along the interval
+        first finds where the starting number lies on the wheel
+        then uses that to find the first probable prime
+        and rolls the wheel from the initial starting point all the way along the interval
  */
+//        long rollingStartTime = System.currentTimeMillis();
+
         int whereTheFirstNumIsOnTheWheel = (int)(start%wheelModulus);
-//        System.out.println("(start%wheelModulus) = " + whereTheFirstNumIsOnTheWheel);
         int actualWheelNum = -1;
         int firstGapIndex = 1;
 
@@ -224,14 +255,8 @@ public class sieveGapMethods {
             firstGapIndex++;
         }
 
-//        int wheelCount = 0;
-//        System.out.println("start mod(wheelMod) = " + whereTheFirstNumIsOnTheWheel);
-//        System.out.println("firstGapIndex = " + firstGapIndex);
-//        System.out.println("actualWheelNum = " + actualWheelNum);
-
         int indexDistanceBetweenStartAndFirstWheelNum = (actualWheelNum - whereTheFirstNumIsOnTheWheel-1)/2;
         int probablePrime = indexDistanceBetweenStartAndFirstWheelNum;
-//        System.out.println("probable Prime = " + probablePrime);
 
 /*
         This rolls the wheel once starting at some point and rolling to a wheel position of 0
@@ -245,93 +270,40 @@ public class sieveGapMethods {
 /*
         This rolls the wheel without any costly if statements and gets us like 90% of the way there
  */
-        int safetyNet = boolLength - wheelModulus;
+        int safetyNet = boolLength - (wheelModulus/2);
         while(probablePrime < safetyNet){
             for(short gap: gapWheelInUse){
                 probablePrime += gap;
                 oddIsPrimeInterval[probablePrime] = true;
-//                wheelCount++;
             }
         }
 
 /*
         This rolls the wheel to the very end of the list
  */
-        boolean done = false;
-        while(!done) {
-            for (short gapBetweenPrimes : gapWheelInUse){
-                probablePrime += gapBetweenPrimes;
-                if ((probablePrime) >= boolLength) {
-                    done = true;
-                    break;
-                }
-                oddIsPrimeInterval[probablePrime] = true;
-            }
-        }
-
-
-//        System.out.println("wheelCount = " + wheelCount);
-/*
-        Sieve of Eratosthenes
-        Takes the multiples of all the primes and labels them as not prime
-
-        int biggestPrime = (int) (Math.sqrt(num)/2)+1;
-        for (int oddIndex = smallestPrimeIndexToCheck; oddIndex < biggestPrime; oddIndex++) {
-            if (!oddIsPrime[oddIndex]) {
-                continue;
-            }
-            int actualPrime = (2*oddIndex)+1;
-            int compositeIndex = 2*oddIndex * (oddIndex+1);
-            int counter = 0;
-            int indexModChecker = gapWheelInUse[0]*-1;
-            for (int i = 0; i<wheelArrayLength; i++){
-                indexModChecker+=gapWheelInUse[i];
-                if((actualPrime%wheelModulus)== ((indexModChecker*2)+1)){
-                    counter = i+1;
-                    break;
-                }
-            }
-
-            while(compositeIndex<boolLength){
-                oddIsPrime[compositeIndex] = false;
-                int nextGap = gapWheelInUse[counter%wheelArrayLength];
-                compositeIndex += actualPrime*nextGap;
-                counter++;
-            }
-        }
- */
-/*
-        for (short gap : gapArray)
-        {
-            prime += gap;
-            if(prime < smallestPrimeIndexToCheck){
-                continue;
-            }
-            if (prime > biggestNeededPrime) {
+        for (short gapBetweenPrimes : gapWheelInUse){
+            probablePrime += gapBetweenPrimes;
+            if ((probablePrime) >= boolLength) {
                 break;
             }
-            multiple = (start - ((start) % prime)) + prime;
-            if (multiple % 2 == 0) {
-                multiple += prime;
-            }
-
-            for (long composite = multiple; composite < start + add; composite += 2 * prime) {
-                oddIsPrimeInterval[(int) (composite - start - 1) / 2] = false;
-            }
+            oddIsPrimeInterval[probablePrime] = true;
         }
-*/
+
+//        long rollingEndTime = System.currentTimeMillis();
+//        calcTime += rollingEndTime - rollingStartTime;
+
+//        System.out.println("wheelCount = " + wheelCount);
+
 
 
 /*
-        The thing that does work here right now is i will sometimes start on a number that the wheel has checked and
-        then everything's fucked
-        so I need to start on whatever number is a multiple of that prime and also labeled prime by the wheel
+        Sieve of Eratosthenes
+        finds multiples of all primes that have not already been checked by the wheel
+        and labels them all as not prime
  */
         long actualPrime = 2;
-
         for(short primeGap: gapArray){
             actualPrime += primeGap;
-//            System.out.println("next prime = " + actualPrime);
             if (actualPrime < smallestPrimeIndexToCheck){
                 continue;
             }
@@ -348,8 +320,10 @@ public class sieveGapMethods {
             int compositeIndex = (int) ((multiple-start-1)/2);
             int counter = 0;
             int indexModChecker = -1;
-            int wheelCheckerThingy = (int) (multiple/actualPrime);
-            int modulusThingy= wheelCheckerThingy%wheelModulus;
+            long wheelCheckerThingy = (multiple/actualPrime);
+            long modulusThingy= wheelCheckerThingy%wheelModulus;
+
+//            long indexStartTime = System.currentTimeMillis();
 
             for (int i = 0; i < wheelArrayLength; i++){
             indexModChecker += 2*gapWheelInUse[i];
@@ -361,12 +335,48 @@ public class sieveGapMethods {
 
             compositeIndex += actualPrime*(indexModChecker - modulusThingy)/2;
 
-            while(compositeIndex < boolLength){
+//            long indexEndTime = System.currentTimeMillis();
+//            calcTime += indexEndTime - indexStartTime;
+
+//            long sieveStartTime = System.currentTimeMillis();
+
+            boolean completelyDone = false;
+            long sieveSafetyNet = boolLength - (actualPrime*wheelModulus);
+
+            for(int i = counter; i < wheelArrayLength; i++){
+                if (compositeIndex >= boolLength){
+                    completelyDone = true;
+                    break;
+                }
                 oddIsPrimeInterval[compositeIndex] = false;
-                int nextGap = gapWheelInUse[counter % wheelArrayLength];
-                compositeIndex += actualPrime*nextGap;
-                counter++;
+                compositeIndex += actualPrime * gapWheelInUse[i];
+
             }
+
+            /**/
+            /**/
+            while(compositeIndex < sieveSafetyNet){
+                for(short gap: gapWheelInUse){
+                    oddIsPrimeInterval[compositeIndex] = false;
+                    compositeIndex += actualPrime*gap;
+                }
+            }
+
+            /**/
+            /**/
+            while (!completelyDone) {
+                for (short gap : gapWheelInUse) {
+                    if (compositeIndex >= boolLength) {
+                        completelyDone = true;
+                        break;
+                    }
+                    oddIsPrimeInterval[compositeIndex] = false;
+                    compositeIndex += (actualPrime * gap);
+                }
+            }
+
+//            long sieveEndTime = System.currentTimeMillis();
+//            calcTime += sieveEndTime - sieveStartTime;
         }
 
 /*
@@ -382,41 +392,34 @@ public class sieveGapMethods {
         }
         totalCount += intervalCount;
 
-
+//        System.out.println("calc time for the one spot = " + calcTime);
         return Arrays.copyOf(gapIntervalArray, intervalCount);
     }
 
 
     public static long findBasePrime(long start, short[] gapArray){
-//        System.out.println("findBasePrime is working");
         if (start == 0){
             return 2;
         }
         long numToTest = start;
         for (int i = 0; i< 1000; i++){
             if (isPrime(numToTest, gapArray)){
-//                System.out.println("Base prime: " + numToTest);
                 return numToTest;
             }
-//            System.out.println(numToTest + " is not prime");
             numToTest--;
         }
         return 3;
     }
 
     public static boolean isPrime(long number, short[] gapArray){
-//        System.out.println("isPrime is working");
         long prime = 2;
         if (number%prime== 0) {
-//            System.out.println(number +" is a multiple of 2");
             return false;
         }
         long biggestPrime = (long)Math.sqrt(number);
-//        System.out.println("biggestPrime = " + biggestPrime);
         for (short gap: gapArray)
         {
             prime += gap;
-//            System.out.println("prime now equals " + prime);
             if (number%prime == 0){
                 return false;
             }
@@ -424,7 +427,6 @@ public class sieveGapMethods {
                 return true;
             }
         }
-//        System.out.println(number + " is prime");
         return true;
     }
 }

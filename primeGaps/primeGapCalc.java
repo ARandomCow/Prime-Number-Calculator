@@ -23,7 +23,7 @@ public class primeGapCalc {
 //            throws FileNotFoundException
     {
         int primeMax = 1_000_000_000;
-        int numOfPrimes = 51_000_000;
+        int numOfPrimes = 100_000_000;
 /*
         its the number of primes - 1 (because this algorithm doesnt worry about 2 or multiples of it)
         primeMax = 100, numOfPrimes = 24
@@ -94,20 +94,22 @@ public class primeGapCalc {
             System.out.print(prime + " | ");
         }
         System.out.println("");
+
+        System.out.println(prime);
 /**/
         final long firstEndTime = System.currentTimeMillis();
         System.out.println("Initial execution time: " + (firstEndTime - startTime) + " milliseconds");
 
 
 
-        long start = 0;
-        int add = 200_000_000;
-        int primeArrayLength = 20_000_000;
+        long start = 1_000_000_000L;
+        int add = 50_000_000;
+        int primeArrayLength = 5_000_000;
         int repeat = 1;
-        int numOfRepeats = 5;
+        int numOfRepeats = 0;
         int intervalCount;
         long totalCount = erat.getTotalCount();
-        int checkInterval = 1;
+        int checkInterval = 4;
         long bufferstart = start;
 /*
                 File csvFile = new File("primeList.csv");
@@ -135,7 +137,7 @@ public class primeGapCalc {
         while (repeat<=numOfRepeats)
         {
             short[] gapIntervalArray = erat.sieveFindInterval(start, add, gapArray,
-                    primeArrayLength, gapWheelMod9699690, 9699690);
+                    primeArrayLength, gapWheelMod2310, 2310);
 
             start+=add;
             if(repeat%checkInterval==0)
