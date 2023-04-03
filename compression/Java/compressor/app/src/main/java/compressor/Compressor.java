@@ -56,7 +56,7 @@ public class Compressor {
       //final int compressedLength = data.length; 
 
       if (debug) {
-        System.out.println("Compressed Length: " + originalLength);
+        System.out.println("\nOriginal Length: " + originalLength);
 
       }
 
@@ -75,11 +75,15 @@ public class Compressor {
       long endTime = System.currentTimeMillis();
 
       if (debug) {
-        System.out.println("Decompressed Length: " + compressedLength2);
+        System.out.println("Decompressed Length: " + restored.length);
 
         long duration = endTime - startTime;
 
         System.out.println("Decompression Time: " + duration + " ms");
+
+        //double compressionRatio = (originalLength - restored.length) / originalLength;
+
+       // System.out.println("\nCompression Ratio: " + (compressionRatio * 100) + "%");
 
       } 
 
