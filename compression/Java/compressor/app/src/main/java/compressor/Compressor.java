@@ -106,6 +106,8 @@ public class Compressor {
             return; 
         }
 
+        System.out.println("\nInput File Size: " + input.length + " bytes");
+
         // Compress input data 
         byte[] compressed;
         try {

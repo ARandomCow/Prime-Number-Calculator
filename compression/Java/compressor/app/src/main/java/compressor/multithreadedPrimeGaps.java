@@ -27,7 +27,6 @@ public class multithreadedPrimeGaps {
 
         final long firstEndTime = System.currentTimeMillis();
         System.out.println("Initial execution time: " + (firstEndTime - startTime) + " milliseconds");
-
         long start = 0;
         int add = 1_000_000;
         int newPrimeLength = 100_000;

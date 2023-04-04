@@ -3,6 +3,10 @@ package compressor;
 
 import java.io.*;
 import compressor.*; 
+import java.nio.file.*;
+import java.util.stream.*;
+import java.nio.file.*;
+import java.util.Arrays;
 
 public class multithreadGapMethods implements Runnable {
 
@@ -45,6 +49,7 @@ public class multithreadGapMethods implements Runnable {
             String csvName = i + "0bil_to_" + (i+1) + "0bil.csv";
             File csvFile = new File(csvName);
             PrintWriter out = new PrintWriter(csvFile);
+            Path filePath = Paths.get(csvName);
             /**/
 
             //initialize bin writer
@@ -69,6 +74,16 @@ public class multithreadGapMethods implements Runnable {
                 for(short gap: gapInterval){
                     out.println(gap);
                 }
+
+           /* try {
+              Files.write(filePath, Arrays.stream(gapInterval).mapToObj(Short::toString).toArray(String[]::new));
+            } 
+
+            catch (Exception e) {
+              e.printStackTrace();
+            }*/
+
+
                 /**/
 
                 //put primes in .bin file
