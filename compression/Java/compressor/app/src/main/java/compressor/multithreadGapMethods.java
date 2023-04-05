@@ -7,6 +7,7 @@ import java.nio.file.*;
 import java.util.stream.*;
 import java.nio.file.*;
 import java.util.Arrays;
+import compressor.Compressor; 
 
 public class multithreadGapMethods implements Runnable {
 
@@ -114,6 +115,11 @@ public class multithreadGapMethods implements Runnable {
 
             totalPrimes = multiSieve.getTotalCount();
             System.out.println("Total primes calculated for thread " + i + ": " + totalPrimes);
+
+            System.out.println("\nCompressing Prime File for Thread " + this.i + "..."); 
+
+            Compressor compressor = new Compressor(); 
+            compressor.compressFile(csvName, csvName); 
 
             /**/
         } catch (IOException e) {

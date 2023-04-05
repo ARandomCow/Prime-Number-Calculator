@@ -1,0 +1,8 @@
+1) Cleanup Output 
+  - Array debug (time + completion) 
+  - Running Thread #
+  - Total Primes calculated by thread # 
+  - Start Compressing 
+  - Input + Compressed Size 
+  - Compression Time 
+

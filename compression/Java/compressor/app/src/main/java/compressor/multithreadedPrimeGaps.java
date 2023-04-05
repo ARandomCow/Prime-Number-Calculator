@@ -30,7 +30,7 @@ public class multithreadedPrimeGaps {
         long start = 0;
         int add = 1_000_000;
         int newPrimeLength = 100_000;
-        int numOfThreads = 1;
+        int numOfThreads = 2;
         long startDifference = 10_000_000_000L;
 
         multithreadGapMethods threadi = new multithreadGapMethods(start, 1, primeArray,

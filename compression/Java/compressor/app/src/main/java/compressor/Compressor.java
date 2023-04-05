@@ -129,7 +129,7 @@ public class Compressor {
         }
 
             System.out.println("\nCompressed size: " + compressed.length);
-            System.out.println("Output file: " + outputFile.getAbsolutePath());
+            //System.out.println("Output file: " + outputFile.getAbsolutePath());
     }
 
     public void decompressFile(String inputName, String outputName) {
