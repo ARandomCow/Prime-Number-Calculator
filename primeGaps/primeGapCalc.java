@@ -21,14 +21,14 @@ public class primeGapCalc {
         final long startTime = System.currentTimeMillis();
 
         //--------------------------------------------------------------------------------------------------
-        int primeMax = 1000000;
+        int primeMax = 100000;
         int numOfPrimes = 200000;
         //its the number of primes - 1 (because this algorithm doesnt worry about 2 or multiples of it)
         //primeMax = 100, numOfPrimes = 24
         //if primeMax = 1,000 then numOfPrimes = 167
         //if primeMax = 10,000 then numOfPrimes = 1228
         //if primeMax = 1,000,000, then numOfPrimes = 78,497
-        // if 100,000,000, then 5761454
+        //if 100,000,000, then 5761454
         //if primeMax = 1,000,000,000 then numOfPrimes = 50847533
         //--------------------------------------------------------------------------------------------------
 
@@ -63,12 +63,12 @@ public class primeGapCalc {
         int primeArrayLength = 1000;
         //repeat should be initialized as 1 + (primeMax/add)
         int repeat = 1;
-        int numOfRepeats = 100;
+        int numOfRepeats = 1;
         int intervalCount;
         long totalCount = erat.getTotalCount();
         int checkInterval = 200;
         long bufferstart = start;
-/*
+/**/
                 File csvFile = new File("primeList.csv");
                 PrintWriter out = new PrintWriter(csvFile);
 /* */
@@ -89,14 +89,15 @@ public class primeGapCalc {
                     e.printStackTrace();
                 }
 /* */
-
-/*
-                out.println("1 | 2");
-                for(int i=0; i<primeArray.length; i++){
-                    out.println((i+2) + " | " + primeArray[i]);
+        int prime = 2;
+/**/
+                out.println(2);
+                for(int i=0; i<gapArray.length; i++){
+                    prime += gapArray[i];
+                    out.println(prime);
                 }
 /**/
-        int prime = 2;
+
         while (repeat<=numOfRepeats)
         {
             short[] gapIntervalArray = erat.sieveFindInterval(start, add, gapArray, primeArrayLength);
@@ -159,7 +160,7 @@ public class primeGapCalc {
 
         }
 
-//                out.close();
+                out.close();
 
 
 //        System.out.println("prime: " + prime);

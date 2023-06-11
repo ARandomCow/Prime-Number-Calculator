@@ -21,8 +21,8 @@ public class primeCalc {
         final long startTime = System.currentTimeMillis();
 
         //--------------------------------------------------------------------------------------------------
-        Integer primeMax = 1000000;
-        int numOfPrimes = 78497;
+        Integer primeMax = 100_000;
+        int numOfPrimes = 9591;
         //its the number of primes - 1 (because this algorithm doesnt worry about 2 or multiples of it)
         //primeMax = 100, numOfPrimes = 24
         //if primeMax = 1,000 then numOfPrimes = 167
@@ -54,12 +54,12 @@ public class primeCalc {
         int primeArrayLength = 100_000;
         //repeat should be initialized as 1 + (primeMax/add)
         int repeat = 1;
-        int numOfRepeats = 1000;
+        int numOfRepeats = 0;
         int intervalCount;
         long totalCount = erat.getTotalCount();
         int checkInterval = 200;
         long bufferstart = start;
-/*
+/**/
                 File csvFile = new File("primeList.csv");
                 PrintWriter out = new PrintWriter(csvFile);
 /* */
@@ -81,10 +81,11 @@ public class primeCalc {
                 }
 /* */
 
-/*
-                out.println("1 | 2");
+/**/
+                out.println("2");
                 for(int i=0; i<primeArray.length; i++){
-                    out.println((i+2) + " | " + primeArray[i]);
+//                    System.out.println(i + "| " + primeArray[i]);
+                    out.print(", " + primeArray[i]);
                 }
 /**/
 
@@ -149,7 +150,7 @@ public class primeCalc {
 
         }
 
-//                out.close();
+                out.close();
 
 
         final long finalEndTime = System.currentTimeMillis();

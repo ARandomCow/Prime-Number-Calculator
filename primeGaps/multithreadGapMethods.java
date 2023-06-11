@@ -17,6 +17,8 @@ public class multithreadGapMethods implements Runnable {
     int repetitions;
     long totalPrimes;
 
+    long basePrime;
+
 
 
     public multithreadGapMethods(long startingNum, int addNum,
@@ -30,8 +32,11 @@ public class multithreadGapMethods implements Runnable {
         numThreads = numOfThreads;
         totalInterval = totalIntervalNum;
         repetitions = (int) (totalInterval/add);
+//        basePrime = sieveGapMethods.findBasePrime(start, gapArray);
 
         multiSieve = new sieveGapMethods(gapArray);
+
+        long prime = 2;
     }
 
     //@Override
@@ -41,7 +46,7 @@ public class multithreadGapMethods implements Runnable {
 
             //initialize csv writer
             /**/
-            String csvName = i + "0bil_to_" + (i+1) + "0bil.csv";
+            String csvName = (2*i) + "0bil_to_" + (2*(i + 1)) + "0bil.csv";
             File csvFile = new File(csvName);
             PrintWriter out = new PrintWriter(csvFile);
             /**/
@@ -54,18 +59,17 @@ public class multithreadGapMethods implements Runnable {
             /**/
 
             long intStartTime = System.currentTimeMillis();
-            System.out.println("Running thread " + i);
+            System.out.println("Running thread " + (i+1));
             int count = 0;
-            for (int j = 1; j <= repetitions; j++)
-            {
+            for (int j = 1; j <= repetitions; j++) {
                 //creates new array of primes
-                short[] gapInterval = multiSieve.sieveFindInterval(start + ((long) add * (j-1)), add, gapArray,
+                short[] gapInterval = multiSieve.sieveFindInterval(start + ((long) add * (j - 1)), add, gapArray,
                         listLengthOfGapInterval);
 
                 int numPrimes = multiSieve.getIntervalCount();
                 //put primes in .csv file
                 /**/
-                for(short gap: gapInterval){
+                for (short gap : gapInterval) {
                     out.println(gap);
                 }
                 /**/
@@ -77,15 +81,20 @@ public class multithreadGapMethods implements Runnable {
                 }
                 /* */
 
+//                calculate and print a prime
+//                for(short gap: gapInterval){
+//
+//                }
+
                 listLengthOfGapInterval = numPrimes + 10000;
-                long numOfRepeats=1000;
-                if (j%numOfRepeats == 0){
+                long numOfRepeats = 1000;
+                if (j % numOfRepeats == 0) {
                     long intTime = System.currentTimeMillis();
                     System.out.println(
-                            "thread " + (i%numThreads) + " calculated " +
-                            (start+ (long) add *numOfRepeats *count) +
-                            " to " + ((start+ (long) add *numOfRepeats * count)+add* numOfRepeats) +
-                            " in " + ((float) (intTime-intStartTime)/1000.0) + " seconds");
+                            "thread " + (i +1) + " calculated " +
+                                    (start + (long) add * numOfRepeats * count) +
+                                    " to " + ((start + (long) add * numOfRepeats * count) + add * numOfRepeats) +
+                                    " in " + ((float) (intTime - intStartTime) / 1000.0) + " seconds");
                     count++;
                     intStartTime = System.currentTimeMillis();
                 }
@@ -97,13 +106,16 @@ public class multithreadGapMethods implements Runnable {
 //            oos.close();
 
             totalPrimes = multiSieve.getTotalCount();
-            System.out.println("Total primes calculated for thread " + i + ": " + totalPrimes);
+            System.out.println("Total primes calculated for thread " + (i+1) + ": " + totalPrimes);
+
 
             /**/
-        } catch (IOException e) {
-            e.printStackTrace();}
-        /* */
-    }
+        }
+         catch(IOException e){
+                e.printStackTrace();
+            }
+            /* */
+        }
 
     public short[] getGaps() {
         return gapInterval;

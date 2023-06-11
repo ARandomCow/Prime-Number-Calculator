@@ -1,8 +1,10 @@
 package primeGaps;
 
+import java.io.FileNotFoundException;
+
 public class multithreadedPrimeGaps {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
 
         final long startTime = System.currentTimeMillis();
 
@@ -36,34 +38,38 @@ public class multithreadedPrimeGaps {
         int add = 1_000_000;
         int newPrimeLength = 100_000;
         int numOfThreads = 5;
-        long startDifference = 10_000_000_000L;
-
-        multithreadGapMethods threadi = new multithreadGapMethods(start, 1, primeArray,
-                newPrimeLength, 1, numOfThreads, startDifference);
-        Thread t1 = new Thread(threadi);
-
+        long startDifference = 20_000_000_000L;
+        int threadNumber = 1;
         int totalThreadsRun = 0;
-        while (totalThreadsRun <= 0) {
-            long intervalStartTime = System.currentTimeMillis();
 
-            for (int threadNum = totalThreadsRun; threadNum < numOfThreads+totalThreadsRun; threadNum++) {
-                threadi = new multithreadGapMethods(start + (startDifference * threadNum),
-                        add, primeArray, newPrimeLength, threadNum, numOfThreads, startDifference);
-                t1 = new Thread(threadi);
-                t1.start();
+            multithreadGapMethods threadi = new multithreadGapMethods(start, 1, primeArray,
+                    newPrimeLength, threadNumber, numOfThreads, startDifference);
+            Thread t1 = new Thread(threadi);
+
+
+            while (totalThreadsRun <= 999_999_999) {
+                long intervalStartTime = System.currentTimeMillis();
+
+                for (int threadNum = totalThreadsRun; threadNum < numOfThreads + totalThreadsRun; threadNum++) {
+                    threadi = new multithreadGapMethods(start + (startDifference * threadNum),
+                            add, primeArray, newPrimeLength, threadNum, numOfThreads, startDifference);
+                    t1 = new Thread(threadi);
+                    t1.start();
+                }
+
+                try {
+                    t1.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                totalThreadsRun += numOfThreads;
+
+                long intervalTime = System.currentTimeMillis();
+                System.out.println("time elapsed for " + totalThreadsRun + " threads: " + (intervalTime - intervalStartTime) + " milliseconds");
             }
 
-            try {
-                t1.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-            totalThreadsRun += numOfThreads;
-
-            long intervalTime = System.currentTimeMillis();
-            System.out.println("time elapsed for " + totalThreadsRun + " threads: " + (intervalTime - intervalStartTime) + " milliseconds");
-        }
         final long endTime = System.currentTimeMillis();
         System.out.println("Total Time Elapsed: " + (endTime - startTime) + " milliseconds");
     }

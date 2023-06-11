@@ -77,7 +77,7 @@ public class sieveMethods {
             if (!boolOddArray[oddIndex]) {
                 primeArray[startCount] = 2 * oddIndex + 1;
                 startCount++;
-//                totalCount++;
+                totalCount++;
             }
         }
 
@@ -129,6 +129,7 @@ public class sieveMethods {
                 primeList[intervalCount] = (2L * oddIndex) + 1 + start;
                 intervalCount++;
                 totalCount++;
+                System.out.println(totalCount);
             }
         }
 
