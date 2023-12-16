@@ -25,7 +25,7 @@ public class sieveGapMethods {
     //create new object to build a starting array
     public sieveGapMethods(int startingNum) {
         num = startingNum;
-        totalCount = 0;
+        totalCount = 1;
     }
 
     // returns the amount of calculated primes. . .theoretically at least

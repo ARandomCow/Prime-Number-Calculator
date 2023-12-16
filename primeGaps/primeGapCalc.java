@@ -1,9 +1,10 @@
 package primeGaps;
 
 import java.io.*;
+import java.util.Scanner;
 
 //vague instructions
-//primeMax, add, and repeat are the two important variables to mess around with
+//primeMax, add, and repeat are the important variables to mess around with
 //primeMax determines to what number you find the first prime numbers (0, MAX)
 //numOfPrimes will be the size of your starting array that'll be used for the rest of the sieves
 //add determines the interval that you'll be finding more prime numbers in (start, start+add)
@@ -18,11 +19,20 @@ public class primeGapCalc {
     public static void main( String[] args ) throws FileNotFoundException
     {
 
-        final long startTime = System.currentTimeMillis();
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("Creating base prime array \n");
+        System.out.println("What is the upper bound of your initial array of prime numbers?");
+        int myPrimeMax = input.nextInt();
+
+//        System.out.println("What is the number of primes you think is in this list?");
+        int myNumOfPrimes = myPrimeMax/2;
+
+
 
         //--------------------------------------------------------------------------------------------------
-        int primeMax = 100000;
-        int numOfPrimes = 200000;
+        int primeMax = myPrimeMax;
+        int numOfPrimes = myNumOfPrimes;
         //its the number of primes - 1 (because this algorithm doesnt worry about 2 or multiples of it)
         //primeMax = 100, numOfPrimes = 24
         //if primeMax = 1,000 then numOfPrimes = 167
@@ -31,11 +41,13 @@ public class primeGapCalc {
         //if 100,000,000, then 5761454
         //if primeMax = 1,000,000,000 then numOfPrimes = 50847533
         //--------------------------------------------------------------------------------------------------
-
+        long startTime = System.currentTimeMillis();
         sieveGapMethods erat = new sieveGapMethods(primeMax);
 
         short[] gapArray = erat.createGapArray(numOfPrimes);
 
+        final long firstEndTime = System.currentTimeMillis();
+        System.out.println("Initial execution time: " + (firstEndTime - startTime) + " milliseconds");
         //        for(int i =0; i<primeArray.length; i++){
         //            System.out.println(primeArray[i]);
         //        }
@@ -55,18 +67,30 @@ public class primeGapCalc {
         }
         System.out.println("");
 */
-        final long firstEndTime = System.currentTimeMillis();
-        System.out.println("Initial execution time: " + (firstEndTime - startTime) + " milliseconds");
+        System.out.println("Creating full prime array \n");
+
+
+        System.out.println("What do you want the upper bound of your prime list to be?");
+        long newPrimeMax = input.nextInt();
+
+        System.out.println("What interval of prime numbers do you want to find? " +
+                "\n (let it be a factor of your largest prime");
+        int myIntervalSize = input.nextInt();
+
+        System.out.println("After how many intervals do you want an update?");
+        int myCheckInterval = input.nextInt();
+
+
+        long mainStartTime = System.currentTimeMillis();
 
         long start = 0;
-        int add = 1_000;
-        int primeArrayLength = 1000;
-        //repeat should be initialized as 1 + (primeMax/add)
-        int repeat = 1;
-        int numOfRepeats = 1;
+        int intervalSize = myIntervalSize;
+        int primeArrayLength = intervalSize/2;
+        //repeat should be initialized as 1 + (primeMax/add) (??? when did I write this)
+        int repeat = 1 ;
+        int numOfRepeats = (int) (newPrimeMax/intervalSize);
         int intervalCount;
-        long totalCount = erat.getTotalCount();
-        int checkInterval = 200;
+        int checkInterval = myCheckInterval;
         long bufferstart = start;
 /**/
                 File csvFile = new File("primeList.csv");
@@ -76,21 +100,10 @@ public class primeGapCalc {
 
 
 
-/*
-                try {
-                    FileOutputStream fileOs = new FileOutputStream("primes.bin");
-                    ObjectOutputStream oos = new ObjectOutputStream(fileOs);
-                    for(int i = 0; i<primeArray.length; i++){
-                        oos.writeInt(primeArray[i]);
-                    }
-                    }
-                catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-/* */
         int prime = 2;
-/**/
+/*
+//        ngl not sure what this does
+
                 out.println(2);
                 for(int i=0; i<gapArray.length; i++){
                     prime += gapArray[i];
@@ -100,82 +113,47 @@ public class primeGapCalc {
 
         while (repeat<=numOfRepeats)
         {
-            short[] gapIntervalArray = erat.sieveFindInterval(start, add, gapArray, primeArrayLength);
-            //            System.out.println(primeList.length);
-            //          for(int i =0; i<primeList.length; i++){
-            //              System.out.println(primeList[i]);
-            //          }
-        /*
-                    for (int i = 0; i< primeList.size(); i++){
-                        System.out.println(primeList.get(i));
-                    }
-        */
-            start+=add;
+            short[] gapIntervalArray = erat.sieveFindInterval(start, intervalSize, gapArray, primeArrayLength);
+
+            start+=intervalSize;
             if(repeat%checkInterval==0)
             {
 
-                System.out.println("interval " + bufferstart + " to " + (bufferstart+(add*(checkInterval))) + " complete");
+                System.out.println("interval " + bufferstart + " to " + (bufferstart+(intervalSize*(checkInterval))) + " complete");
 
-                System.out.println("Total primes calculated: " + totalCount);
+                System.out.println("Total primes calculated: " + erat.getTotalCount());
                 bufferstart = start;
                 long intervalEndTime = System.currentTimeMillis();
                 System.out.println("Time taken = " + (intervalEndTime-intervalStartTime) + " milliseconds");
 
                 intervalStartTime = System.currentTimeMillis();
             }
-            //            if(repeat == 9998){
-            //                for(int i =0; i<primeList.length; i++){
-            //                    System.out.println(primeList[i]);
-            //                }
-            //            }
 
-/*
-                    for(int i=0; i < primeList.length; i++){
-                        out.println((totalCount+i+2) + " | " + primeList[i]);
-                    }
-/*
-                    try {
-                            FileOutputStream fileOs = new FileOutputStream("primes.bin");
-                            ObjectOutputStream loos = new ObjectOutputStream(fileOs);
-                            for(int i=0; i < primeList.length; i++){
-                                loos.writeLong(primeList[i]);
-                                }
-                        }
-                    catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-/* */
 
             repeat++;
-            totalCount = erat.getTotalCount();
-            intervalCount = erat.getIntervalCount()+20000;
+            intervalCount = erat.getIntervalCount()+(intervalSize * checkInterval);
             primeArrayLength = intervalCount;
-
+/**/
             for (short gap: gapIntervalArray){
-                System.out.print(prime + ", ");
+                out.println(prime);
                 prime += gap;
             }
-            System.out.println();
+            out.println(prime);
+ /**/
 
         }
 
                 out.close();
 
 
-//        System.out.println("prime: " + prime);
+        System.out.println("largest prime: " + prime);
 
 //        System.out.println("gap[0] = " + gapIntervalArray[0]);
 
         final long finalEndTime = System.currentTimeMillis();
-        System.out.println("Final execution time: " + (finalEndTime - startTime) + " milliseconds");
+        System.out.println("prime execution time: " + (finalEndTime - mainStartTime) + " milliseconds");
 
-        totalCount = erat.getTotalCount();
-        System.out.println("Total primes calculated: " + totalCount);
-/*
-                for(int i=0; i<primeList.length; i++){
-                System.out.println(primeList[i]);
-                }
-/* */
+        System.out.println("Total primes calculated: " + (erat.getTotalCount()));
+
     }
 }
