@@ -19,6 +19,8 @@ public class multithreadGapMethods implements Runnable {
 
     long basePrime;
 
+    final long billion = 1_000_000_000L;
+
 
 
     public multithreadGapMethods(long startingNum, int addNum,
@@ -46,7 +48,8 @@ public class multithreadGapMethods implements Runnable {
 
             //initialize csv writer
             /**/
-            String csvName = (2*i) + "0bil_to_" + (2*(i + 1)) + "0bil.csv";
+//            String csvName = (2*i) + "0bil_to_" + (2*(i + 1)) + "0bil.csv";
+            String csvName = (start / billion) + "bil_to_" + ((start + totalInterval) / billion) + "bil.csv";
             File csvFile = new File(csvName);
             PrintWriter out = new PrintWriter(csvFile);
             /**/
@@ -87,7 +90,7 @@ public class multithreadGapMethods implements Runnable {
 //                }
 
                 listLengthOfGapInterval = numPrimes + 10000;
-                long numOfRepeats = 1000;
+                long numOfRepeats = billion / add;
                 if (j % numOfRepeats == 0) {
                     long intTime = System.currentTimeMillis();
                     System.out.println(

@@ -50,8 +50,8 @@ public class sieveGapMethods {
 
         // boolean list for all odd numbers
         // if index = n, actual number = 2n+1
-        boolean[] boolOddArray = new boolean[(num + 1) / 2];
-        boolOddArray[0] = true;
+        boolean[] falseIfPrime = new boolean[(num + 1) / 2];
+        falseIfPrime[0] = true;
         gapArray[0] = 1;
 
         // bool[0] is true because 1 is not prime
@@ -64,20 +64,20 @@ public class sieveGapMethods {
         // repeat for all odd ints below sqrt(n)
 
         for (int oddIndex = 1; 2 * oddIndex + 1 < (int) (Math.sqrt(num)) + 1; oddIndex++) {
-            if (!boolOddArray[oddIndex]) {
+            if (!falseIfPrime[oddIndex]) {
                 for (int compositeIndex = ( 2*oddIndex * (oddIndex+1));
                      compositeIndex < (num + 1) / 2;
                      compositeIndex += (2 * oddIndex) + 1) {
-                    boolOddArray[compositeIndex] = true;
+                    falseIfPrime[compositeIndex] = true;
                 }
             }
         }
 
-        boolOddArray[1] = true;
+        falseIfPrime[1] = true;
         // if(number = prime)
         // put number in primeArray
         for (int oddIndex = 2; oddIndex < ((num + 1) / 2); oddIndex++) {
-            if (!boolOddArray[oddIndex]) {
+            if (!falseIfPrime[oddIndex]) {
                 gapArray[startCount] = (short)((oddIndex - currentLargestPrimeIndex)*2);
                 currentLargestPrimeIndex = oddIndex;
                 startCount++;
@@ -104,15 +104,15 @@ public class sieveGapMethods {
         long multiple;
         short[] gapIntervalArray = new short[(numOfNewGaps)];
         boolean startIsZero = false;
-        boolean[] boolAddArray = new boolean[(int) ((add + 1) / 2)];
+        boolean[] intervalFalseIfPrime = new boolean[(int) ((add + 1) / 2)];
         long basePrime = findBasePrime(start, gapArray);
         int baseIndex;
         int biggestNeededPrime = (int) Math.sqrt(start + add) + 1;
 
         if (start == 0){
             startIsZero = true;
-            boolAddArray[0] = true;
-            boolAddArray[1] = true;
+            intervalFalseIfPrime[0] = true;
+            intervalFalseIfPrime[1] = true;
             gapIntervalArray[0] = 1;
             intervalCount = 1;
             totalCount++;
@@ -140,15 +140,15 @@ public class sieveGapMethods {
             }
 
             for (long composite = multiple; composite < start + add; composite += 2 * prime) {
-                boolAddArray[(int) (composite - start - 1) / 2] = true;
+                intervalFalseIfPrime[(int) (composite - start - 1) / 2] = true;
             }
         }
 
 
 
 
-        for (int oddIndex = 0; oddIndex < boolAddArray.length ; oddIndex++) {
-            if (!boolAddArray[oddIndex]) {
+        for (int oddIndex = 0; oddIndex < intervalFalseIfPrime.length ; oddIndex++) {
+            if (!intervalFalseIfPrime[oddIndex]) {
                 gapIntervalArray[intervalCount] = (short) ((oddIndex - baseIndex)*2);
                 baseIndex = oddIndex;
                 intervalCount++;

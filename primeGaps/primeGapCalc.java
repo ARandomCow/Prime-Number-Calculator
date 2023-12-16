@@ -74,7 +74,7 @@ public class primeGapCalc {
         long newPrimeMax = input.nextInt();
 
         System.out.println("What interval of prime numbers do you want to find? " +
-                "\n (let it be a factor of your largest prime");
+                "\n (let it be a factor of your largest prime)");
         int myIntervalSize = input.nextInt();
 
         System.out.println("After how many intervals do you want an update?");
@@ -85,7 +85,7 @@ public class primeGapCalc {
 
         long start = 0;
         int intervalSize = myIntervalSize;
-        int primeArrayLength = intervalSize/2;
+        int primeArrayLength = intervalSize / 2;
         //repeat should be initialized as 1 + (primeMax/add) (??? when did I write this)
         int repeat = 1 ;
         int numOfRepeats = (int) (newPrimeMax/intervalSize);
